@@ -13,8 +13,12 @@
     <groupId>com.diac</groupId>
     <artifactId>awesomehardwaresupply</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>awesomehardwaresupply</name>
     <description>Awesome Hardware Supply</description>
+    <modules>
+        <module>domain</module>
+    </modules>
 
     <properties>
         <java.version>17</java.version>
