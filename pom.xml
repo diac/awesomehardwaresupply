@@ -18,6 +18,7 @@
     <description>Awesome Hardware Supply</description>
     <modules>
         <module>domain</module>
+        <module>knowledgebase</module>
     </modules>
 
     <properties>
