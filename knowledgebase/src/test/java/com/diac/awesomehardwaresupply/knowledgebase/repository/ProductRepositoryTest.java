@@ -47,6 +47,20 @@ public class ProductRepositoryTest {
     }
 
     @Test
+    public void whenFindBySku() {
+        String value = "test";
+        Product product = productRepository.save(
+                Product.builder()
+                        .name(value)
+                        .description(value)
+                        .sku(value)
+                        .build()
+        );
+        Product productInDb = productRepository.findBySku(value).orElse(new Product());
+        assertThat(productInDb).isEqualTo(product);
+    }
+
+    @Test
     public void whenAdd() {
         String value = "test";
         Product product = productRepository.save(
