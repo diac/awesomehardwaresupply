@@ -11,7 +11,6 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,7 +31,8 @@ public class GlobalExceptionHandler {
     /**
      * Метод-обработчик исключений EntityNotFoundException
      *
-     * @param e Объект-исключение
+     * @param e        Объект-исключение
+     * @param response Объект HttpServletResponse
      * @throws IOException В случае, если возникает ошибка записи в response
      */
     @ExceptionHandler(
@@ -57,26 +57,26 @@ public class GlobalExceptionHandler {
     /**
      * Метод-обработчик исключений BindException
      *
-     * @param redirectAttributes Объект RedirectAttributes
-     * @param bindingResult      Объект BindingResult
-     * @return Редирект
+     * @param e             Объект-исключение
+     * @param bindingResult Объект BindingResult
+     * @param response      Объект HttpServletResponse
      */
     @ExceptionHandler(
             value = {
                     BindException.class
             }
     )
-    public String handleValidationBindException(
+    public void handleValidationBindException(
             Exception e,
-            RedirectAttributes redirectAttributes,
-            BindingResult bindingResult
-    ) {
+            BindingResult bindingResult,
+            HttpServletResponse response
+    ) throws IOException {
         log.warn(e.getMessage(), e);
-        redirectAttributes.addFlashAttribute(
-                "errorMessages",
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setContentType("application/json");
+        response.getWriter().write(objectMapper.writeValueAsString(
                 bindingResult.getFieldErrors().stream()
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
-        );
-        return "redirect:/";
+        ));
     }
 }
