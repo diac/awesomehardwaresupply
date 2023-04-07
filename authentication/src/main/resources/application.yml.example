@@ -13,3 +13,6 @@ eureka:
   client:
     service-url:
       defaultZone: eureka_server_url
+# noinspection undefined
+security:
+  b-crypt-encoder-strength: 10
