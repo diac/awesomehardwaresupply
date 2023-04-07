@@ -1,6 +1,6 @@
 package com.diac.awesomehardwaresupply.authentication.service;
 
-import com.diac.awesomehardwaresupply.authentication.model.User;
+import org.springframework.security.core.userdetails.User;
 
 /**
  * Сервис для работы с JWT
