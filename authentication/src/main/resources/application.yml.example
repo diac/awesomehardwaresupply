@@ -1,0 +1,15 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: AUTHENTICATION
+  datasource:
+    url: db_url
+    username: db_username
+    password: db_password
+  liquibase:
+    change-log: classpath:db/liquibase-changelog.xml
+eureka:
+  client:
+    service-url:
+      defaultZone: eureka_server_url

@@ -39,3 +39,4 @@ build/
 .DS_Store
 /.idea/
 /knowledgebase/src/main/resources/application.properties
+/authentication/src/main/resources/application.yml
