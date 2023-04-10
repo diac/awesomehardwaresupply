@@ -24,7 +24,7 @@ public class JwtServiceImpl implements JwtService {
     /**
      * Секретный ключ, используемый при генерации токенов
      */
-    @Value("${jwt.secret}")
+    @Value("${security.jwt.secret}")
     private String jwtSecret;
 
     /**
