@@ -86,9 +86,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                         requests -> requests.requestMatchers(
                                         HttpMethod.POST,
-                                        "/auth/register",
-                                        "/auth/token",
-                                        "/auth/validate"
+                                        "/register",
+                                        "/sign-in",
+                                        "/validate-token"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 )
