@@ -1,6 +1,5 @@
 package com.diac.awesomehardwaresupply.authentication.config;
 
-import com.diac.awesomehardwaresupply.authentication.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,11 +36,6 @@ public class WebSecurityConfig {
      * Конфигурация точки доступа пользователя для обработки исключений
      */
     private final ExceptionHandlingAuthenticationEntryPoint exceptionHandlingAuthenticationEntryPoint;
-
-    /**
-     * Сервис для работы с JWT
-     */
-    private final JwtService jwtService;
 
     /**
      * Бин-провайдер настроек авторизации
