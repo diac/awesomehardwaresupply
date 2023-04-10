@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.authentication.service;
 
+import com.diac.awesomehardwaresupply.authentication.dto.JwtTokenResponseDto;
 import com.diac.awesomehardwaresupply.authentication.dto.UserCredentialsDto;
 
 /**
@@ -11,7 +12,7 @@ public interface AuthService {
      * Авторизовать пользователя в системе
      *
      * @param userCredentialsDto DTO с данными авторизации пользователя
-     * @return JWT токен
+     * @return DTO с данными JWT токена
      */
-    String signIn(UserCredentialsDto userCredentialsDto);
+    JwtTokenResponseDto signIn(UserCredentialsDto userCredentialsDto);
 }
