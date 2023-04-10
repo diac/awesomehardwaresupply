@@ -2,8 +2,8 @@ package com.diac.awesomehardwaresupply.authentication.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -50,6 +50,8 @@ public class JwtServiceImpl implements JwtService {
      */
     @Override
     public void validateToken(String token) {
-       throw new NotImplementedException("Not implemented yet");
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(jwtSecret))
+                .build();
+        verifier.verify(token);
     }
 }
