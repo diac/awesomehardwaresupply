@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,7 @@ public class AuthController {
      * @param user Данные пользователя для регистрации
      * @return Тело ответа со статусом и сообщением об успешной регистрации
      */
+    @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid User user) {
         User newUser = userService.addUser(user);
         return new ResponseEntity<>(
