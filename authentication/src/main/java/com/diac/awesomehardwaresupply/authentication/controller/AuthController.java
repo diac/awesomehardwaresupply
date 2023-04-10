@@ -1,12 +1,12 @@
 package com.diac.awesomehardwaresupply.authentication.controller;
 
 import com.diac.awesomehardwaresupply.authentication.dto.JwtTokenResponseDto;
-import com.diac.awesomehardwaresupply.authentication.dto.JwtTokenValidationDto;
 import com.diac.awesomehardwaresupply.authentication.dto.UserCredentialsDto;
 import com.diac.awesomehardwaresupply.authentication.model.User;
 import com.diac.awesomehardwaresupply.authentication.service.AuthService;
 import com.diac.awesomehardwaresupply.authentication.service.JwtService;
 import com.diac.awesomehardwaresupply.authentication.service.UserService;
+import com.diac.awesomehardwaresupply.domain.dto.JwtTokenValidationDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
