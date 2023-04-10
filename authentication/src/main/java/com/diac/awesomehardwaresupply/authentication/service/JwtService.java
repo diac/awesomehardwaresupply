@@ -14,4 +14,11 @@ public interface JwtService {
      * @return Сгенерированный JWT токен
      */
     String createJwtToken(User principal);
+
+    /**
+     * Проверить валидность предоставленного токена
+     *
+     * @param token Токен
+     */
+    void validateToken(String token);
 }
