@@ -29,13 +29,14 @@ public class UserJpaService implements UserService {
      * Добавить нового пользователя в систему
      *
      * @param user Пользователь
+     * @return Сохраненный пользователь
      */
     @Override
-    public void addUser(User user) {
+    public User addUser(User user) {
         user.setPassword(
                 passwordEncoder.encode(CharBuffer.wrap(user.getPassword()))
                         .toCharArray()
         );
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 }

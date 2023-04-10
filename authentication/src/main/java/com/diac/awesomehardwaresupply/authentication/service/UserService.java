@@ -11,6 +11,7 @@ public interface UserService {
      * Добавить нового пользователя в систему
      *
      * @param user Пользователь
+     * @return Сохраненный пользователь
      */
-    void addUser(User user);
+    User addUser(User user);
 }
