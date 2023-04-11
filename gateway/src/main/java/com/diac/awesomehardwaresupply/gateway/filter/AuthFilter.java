@@ -33,7 +33,6 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
         return ((exchange, chain) -> {
             if (routeValidator.isSecured().test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    System.out.println("Authorization header is missing");
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Authorization header is missing");
                 }
                 String token =
