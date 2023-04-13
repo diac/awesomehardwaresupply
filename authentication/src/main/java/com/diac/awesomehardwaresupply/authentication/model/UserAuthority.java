@@ -28,4 +28,11 @@ public class UserAuthority {
      */
     @Enumerated(EnumType.STRING)
     private String authority;
+
+    /**
+     * Пользователь
+     */
+    @ManyToOne
+    @JoinColumn(name = "auth_user_id")
+    private User user;
 }
