@@ -6,12 +6,12 @@ package com.diac.awesomehardwaresupply.domain.enumeration;
 public enum Authority {
 
     /**
-     * Чтение товаров
+     * Разрешает операции чтения для базы знаний
      */
-    READ_PRODUCTS,
+    KNOWLEDGEBASE_READ,
 
     /**
-     * Изменение товаров
+     * Разрешает операции записи для базы знаний
      */
-    WRITE_PRODUCTS
+    KNOWLEDGEBASE_WRITE
 }
