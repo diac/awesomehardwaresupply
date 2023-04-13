@@ -2,13 +2,12 @@ package com.diac.awesomehardwaresupply.authentication.service;
 
 import com.diac.awesomehardwaresupply.authentication.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 /**
  * Сервис для работы с объектами UserDetails
@@ -33,7 +32,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .map(
-                        user -> new User(user.getUsername(), String.valueOf(user.getPassword()), Collections.emptyList())
+                        user -> new User(
+                                user.getUsername(),
+                                String.valueOf(user.getPassword()),
+                                user.getAuthorities().stream()
+                                        .map(userAuthority -> new SimpleGrantedAuthority(userAuthority.getAuthority()))
+                                        .toList()
+                        )
                 ).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 }
