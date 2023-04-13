@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
+
 /**
  * Модель данных "Пользователь"
  */
@@ -44,4 +46,7 @@ public class User {
     @NotNull(message = "User email is required")
     @NotBlank(message = "User email cannot be blank")
     private String email;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<UserAuthority> authorities;
 }
