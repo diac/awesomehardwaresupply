@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,15 @@ public class JwtServiceImpl implements JwtService {
     public String createJwtToken(User principal) {
         JWTCreator.Builder jwtBuilder = JWT.create().withSubject(principal.getUsername());
         jwtBuilder.withClaim("username", principal.getUsername());
-        jwtBuilder.withClaim("authorities", principal.getAuthorities().toString());
+        jwtBuilder.withClaim(
+                "authorities",
+                String.join(
+                        ",",
+                        principal.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .toList()
+                )
+        );
         return jwtBuilder
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
                 .sign(Algorithm.HMAC256(jwtSecret));
