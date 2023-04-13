@@ -36,7 +36,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                                 user.getUsername(),
                                 String.valueOf(user.getPassword()),
                                 user.getAuthorities().stream()
-                                        .map(userAuthority -> new SimpleGrantedAuthority(userAuthority.getAuthority()))
+                                        .map(
+                                                userAuthority -> new SimpleGrantedAuthority(
+                                                        userAuthority.getAuthority().toString())
+                                        )
                                         .toList()
                         )
                 ).orElseThrow(() -> new UsernameNotFoundException(username));

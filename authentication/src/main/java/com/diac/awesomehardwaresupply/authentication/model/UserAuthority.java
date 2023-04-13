@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.authentication.model;
 
+import com.diac.awesomehardwaresupply.domain.enumeration.Authority;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,7 +28,7 @@ public class UserAuthority {
      * Значение привилегии
      */
     @Enumerated(EnumType.STRING)
-    private String authority;
+    private Authority authority;
 
     /**
      * Пользователь
