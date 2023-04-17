@@ -4,11 +4,11 @@ import com.diac.awesomehardwaresupply.domain.model.Product;
 import com.diac.awesomehardwaresupply.knowledgebase.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Контроллер, реализующий доступ к объектам модели Product
@@ -19,6 +19,11 @@ import java.util.List;
 public class ProductController {
 
     /**
+     * Количество товаров на одной странице
+     */
+    private static final int PRODUCTS_PER_PAGE = 10;
+
+    /**
      * Сервис для работы с объектами модели Product
      */
     private final ProductService productService;
@@ -26,12 +31,14 @@ public class ProductController {
     /**
      * Получить все товары
      *
-     * @return Список товаров
+     * @return Страница с товарами
      */
     @GetMapping("")
-    public ResponseEntity<List<Product>> index() {
+    public ResponseEntity<Page<Product>> index(
+            @RequestParam(name = "page", required = false, defaultValue = "1") int pageNumber
+    ) {
         return new ResponseEntity<>(
-                productService.findAll(),
+                productService.getPage(PageRequest.of(pageNumber - 1, PRODUCTS_PER_PAGE)),
                 HttpStatus.OK
         );
     }

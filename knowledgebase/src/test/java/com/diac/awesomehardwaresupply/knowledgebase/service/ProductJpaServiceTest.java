@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +42,24 @@ public class ProductJpaServiceTest {
         Mockito.when(productRepository.findAll()).thenReturn(products);
         assertThat(productService.findAll()).isEqualTo(products);
         Mockito.verify(productRepository).findAll();
+    }
+
+    @Test
+    public void whenGetPage() {
+        List<Product> expectedProducts = List.of(
+                Product.builder()
+                        .id(1)
+                        .build(),
+                Product.builder()
+                        .id(2)
+                        .build()
+        );
+        Page<Product> expectedProductPage = Mockito.mock(Page.class);
+        Mockito.when(expectedProductPage.getContent()).thenReturn(expectedProducts);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Mockito.when(productRepository.findAll(pageRequest)).thenReturn(expectedProductPage);
+        assertThat(productService.getPage(pageRequest).getContent()).isEqualTo(expectedProducts);
+        Mockito.verify(productRepository).findAll(pageRequest);
     }
 
     @Test

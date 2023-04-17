@@ -4,6 +4,8 @@ import com.diac.awesomehardwaresupply.domain.model.Product;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +35,17 @@ public class ProductJpaService implements ProductService {
     @Override
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    /**
+     * Получить страницу с товарами
+     *
+     * @param pageRequest Объект PageRequest
+     * @return Страница с товарами
+     */
+    @Override
+    public Page<Product> getPage(PageRequest pageRequest) {
+        return productRepository.findAll(pageRequest);
     }
 
     /**

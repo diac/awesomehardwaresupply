@@ -1,6 +1,8 @@
 package com.diac.awesomehardwaresupply.knowledgebase.service;
 
 import com.diac.awesomehardwaresupply.domain.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -15,6 +17,14 @@ public interface ProductService {
      * @return Список товаров
      */
     List<Product> findAll();
+
+    /**
+     * Получить страницу с товарами
+     *
+     * @param pageRequest Объект PageRequest
+     * @return Страница с товарами
+     */
+    Page<Product> getPage(PageRequest pageRequest);
 
     /**
      * Найти товар по ID
