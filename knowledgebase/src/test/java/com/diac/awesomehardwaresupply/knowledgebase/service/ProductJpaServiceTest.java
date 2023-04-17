@@ -1,8 +1,8 @@
 package com.diac.awesomehardwaresupply.knowledgebase.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.Product;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -79,7 +79,7 @@ public class ProductJpaServiceTest {
         Mockito.when(productRepository.findById(id)).thenReturn(Optional.empty());
         assertThatThrownBy(
                 () -> productService.findById(id)
-        ).isInstanceOf(EntityNotFoundException.class);
+        ).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class ProductJpaServiceTest {
         Mockito.when(productRepository.findBySku(sku)).thenReturn(Optional.empty());
         assertThatThrownBy(
                 () -> productService.findBySku(sku)
-        ).isInstanceOf(EntityNotFoundException.class);
+        ).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class ProductJpaServiceTest {
         Mockito.when(productRepository.findById(id)).thenReturn(Optional.empty());
         assertThatThrownBy(
                 () -> productService.update(id, product)
-        ).isInstanceOf(EntityNotFoundException.class);
+        ).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
@@ -170,6 +170,6 @@ public class ProductJpaServiceTest {
         Mockito.when(productRepository.findById(id)).thenReturn(Optional.empty());
         assertThatThrownBy(
                 () -> productService.delete(id)
-        ).isInstanceOf(EntityNotFoundException.class);
+        ).isInstanceOf(ResourceNotFoundException.class);
     }
 }

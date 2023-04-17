@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.knowledgebase.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.Product;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -59,7 +60,7 @@ public class ProductJpaService implements ProductService {
     public Product findById(int id) {
         return productRepository.findById(id)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, id))
+                        () -> new ResourceNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, id))
                 );
     }
 
@@ -74,7 +75,7 @@ public class ProductJpaService implements ProductService {
     public Product findBySku(String sku) {
         return productRepository.findBySku(sku)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, sku))
+                        () -> new ResourceNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, sku))
                 );
     }
 
@@ -104,7 +105,7 @@ public class ProductJpaService implements ProductService {
                     product.setId(id);
                     return productRepository.save(product);
                 }).orElseThrow(
-                        () -> new EntityNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, id))
+                        () -> new ResourceNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, id))
                 );
     }
 
@@ -120,7 +121,7 @@ public class ProductJpaService implements ProductService {
                 .ifPresentOrElse(
                         productRepository::delete,
                         () -> {
-                            throw new EntityNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, id));
+                            throw new ResourceNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, id));
                         }
                 );
 
