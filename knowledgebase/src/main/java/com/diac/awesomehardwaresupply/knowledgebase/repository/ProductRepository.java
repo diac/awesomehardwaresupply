@@ -12,5 +12,11 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
+    /**
+     * Найти товар по артикулу
+     *
+     * @param sku Артикул
+     * @return Optional с товаром. Пустой Optional, если ничего не найдено
+     */
     Optional<Product> findBySku(String sku);
 }
