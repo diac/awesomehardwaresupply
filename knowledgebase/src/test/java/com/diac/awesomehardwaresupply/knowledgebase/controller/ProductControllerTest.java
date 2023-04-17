@@ -1,10 +1,10 @@
 package com.diac.awesomehardwaresupply.knowledgebase.controller;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.Product;
 import com.diac.awesomehardwaresupply.knowledgebase.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -60,7 +60,7 @@ public class ProductControllerTest {
     @Test
     public void whenGetNotFound() throws Exception {
         int id = 1;
-        Mockito.when(productService.findById(id)).thenThrow(EntityNotFoundException.class);
+        Mockito.when(productService.findById(id)).thenThrow(ResourceNotFoundException.class);
         String requestUrl = String.format("/product/%d", id);
         mockMvc.perform(
                 get(requestUrl)
@@ -85,7 +85,7 @@ public class ProductControllerTest {
     @Test
     public void whenFindBySkuNotFound() throws Exception {
         String sku = "test";
-        Mockito.when(productService.findBySku(sku)).thenThrow(EntityNotFoundException.class);
+        Mockito.when(productService.findBySku(sku)).thenThrow(ResourceNotFoundException.class);
         String requestUrl = String.format("/product/find_by_sku/%s", sku);
         mockMvc.perform(get(requestUrl))
                 .andExpect(status().isNotFound());

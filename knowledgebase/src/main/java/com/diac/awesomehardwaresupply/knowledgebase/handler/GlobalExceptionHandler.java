@@ -1,7 +1,7 @@
 package com.diac.awesomehardwaresupply.knowledgebase.handler;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     private final ObjectMapper objectMapper;
 
     /**
-     * Метод-обработчик исключений EntityNotFoundException
+     * Метод-обработчик исключений ResourceNotFoundException
      *
      * @param e        Объект-исключение
      * @param response Объект HttpServletResponse
@@ -37,10 +37,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(
             value = {
-                    EntityNotFoundException.class
+                    ResourceNotFoundException.class
             }
     )
-    public void handleEntityNotFoundException(Exception e, HttpServletResponse response) throws IOException {
+    public void handleResourceNotFoundException(Exception e, HttpServletResponse response) throws IOException {
         log.warn(e.getMessage(), e);
         response.setStatus(HttpStatus.NOT_FOUND.value());
         response.setContentType("application/json");
