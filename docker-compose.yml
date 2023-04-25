@@ -14,3 +14,5 @@ services:
       context: .
       dockerfile: gateway/Dockerfile
     container_name: awesomehardwaresupply_app_gateway
+    environment:
+      - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
