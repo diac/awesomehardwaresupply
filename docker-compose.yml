@@ -7,3 +7,10 @@ services:
       context: .
       dockerfile: eureka-server/Dockerfile
     container_name: awesomehardwaresupply_app_eureka_server
+  ### Gateway ###
+  app_gateway:
+    image: ndiac/awesomehardwaresupply_app_gateway
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    container_name: awesomehardwaresupply_app_gateway
