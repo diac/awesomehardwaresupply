@@ -2,7 +2,7 @@
 FROM maven:3.8-openjdk-17 as maven
 WORKDIR /app
 COPY . /app
-RUN mvn -pl gateway clean package
+RUN mvn --projects domain,gateway clean package
 
 # Launch the app
 FROM openjdk:17.0.2-jdk
