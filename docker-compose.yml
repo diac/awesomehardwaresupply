@@ -21,3 +21,10 @@ services:
       context: .
       dockerfile: authentication/Dockerfile
     container_name: awesomehardwaresupply_app_authentication
+  ### Knowledgebase ###
+  app_knowledgebase:
+    image: ndiac/awesomehardwaresupply_app_knowledgebase
+    build:
+      context: .
+      dockerfile: knowledgebase/Dockerfile
+    container_name: awesomehardwaresupply_app_knowledgebase
