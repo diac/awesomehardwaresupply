@@ -1,12 +1,5 @@
 version: "3.9"
 services:
-  ### Eureka Server ###
-  app_eureka_server:
-    image: ndiac/awesomehardwaresupply_app_eureka_server
-    build:
-      context: .
-      dockerfile: eureka-server/Dockerfile
-    container_name: awesomehardwaresupply_app_eureka_server
   ### Gateway ###
   app_gateway:
     image: ndiac/awesomehardwaresupply_app_gateway
