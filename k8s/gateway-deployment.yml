@@ -34,7 +34,7 @@ metadata:
   name: gateway-service
 spec:
   selector:
-    app: gateway-server
+    app: gateway
   type: LoadBalancer
   ports:
     - protocol: TCP
