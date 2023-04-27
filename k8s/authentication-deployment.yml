@@ -35,6 +35,16 @@ spec:
                 secretKeyRef:
                   name: authentication-db-secret
                   key: postgres-password
+            - name: SECURITY_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: security-jwt-secret
+            - name: SECURITY_B-CRYPT-ENCODER-STRENGTH
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: security-b-crypt-encoder-strength
 ---
 apiVersion: v1
 kind: Service
