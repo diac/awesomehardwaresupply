@@ -25,6 +25,16 @@ spec:
                 configMapKeyRef:
                   name: authentication-db-configmap
                   key: database_url
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: authentication-db-secret
+                  key: postgres-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authentication-db-secret
+                  key: postgres-password
 ---
 apiVersion: v1
 kind: Service
