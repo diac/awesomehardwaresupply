@@ -52,7 +52,7 @@ metadata:
   name: authentication-service
 spec:
   selector:
-    app: gateway-server
+    app: authentication
   type: ClusterIP
   ports:
     - protocol: TCP
