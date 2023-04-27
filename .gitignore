@@ -43,3 +43,4 @@ build/
 /gateway/src/main/resources/application.yml
 /k8s/authentication-db-configmap.yml
 /k8s/authentication-db-secret.yml
+/k8s/jwt-secret.yml
