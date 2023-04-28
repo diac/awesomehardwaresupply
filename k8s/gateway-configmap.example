@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-configmap
+data:
+  authentication_service_uri: authentication_service_uri
+  knowledgebase_service_uri: knowledgebase_service_uri

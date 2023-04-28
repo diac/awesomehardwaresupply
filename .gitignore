@@ -46,3 +46,4 @@ build/
 /k8s/jwt-secret.yml
 /k8s/knowledgebase-db-secret.yml
 /k8s/knowledgebase-db-configmap.yml
+/k8s/gateway-configmap.yml
