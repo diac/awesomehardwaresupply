@@ -1,0 +1,16 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: AUTHENTICATION
+  datasource:
+    url: db_url
+    username: db_username
+    password: db_password
+  liquibase:
+    change-log: classpath:db/liquibase-changelog.xml
+# noinspection undefined
+security:
+  b-crypt-encoder-strength: 10
+  jwt:
+    secret: jwt_secret_at_least_256_characters
