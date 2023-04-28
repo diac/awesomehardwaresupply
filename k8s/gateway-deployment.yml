@@ -20,6 +20,16 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: AUTHENTICATION_SERVICE_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway-configmap
+                  key: authentication_service_uri
+            - name: KNOWLEDGEBASE_SERVICE_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway-configmap
+                  key: knowledgebase_service_uri
             - name: SECURITY_JWT_SECRET
               valueFrom:
                 secretKeyRef:
