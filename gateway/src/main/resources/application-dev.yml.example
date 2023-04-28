@@ -1,0 +1,25 @@
+server:
+  port: port_number
+spring:
+  application:
+    name: GATEWAY
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: authentication
+          uri: authentication_service_uri
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<segment>.*), /$\{segment}
+        - id: knowledgebase
+          uri: knowledgebase_service_uri
+          predicates:
+            - Path=/knowledgebase/**
+          filters:
+            - AuthFilter
+            - RewritePath=/knowledgebase/(?<segment>.*), /$\{segment}

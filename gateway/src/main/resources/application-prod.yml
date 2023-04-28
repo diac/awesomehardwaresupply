@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: authentication
+          uri: ${AUTHENTICATION_SERVICE_URI}
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<segment>.*), /$\{segment}
+        - id: knowledgebase
+          uri: ${KNOWLEDGEBASE_SERVICE_URI}
+          predicates:
+            - Path=/knowledgebase/**
+          filters:
+            - AuthFilter
+            - RewritePath=/knowledgebase/(?<segment>.*), /$\{segment}

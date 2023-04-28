@@ -50,3 +50,4 @@ build/
 /authentication/src/main/resources/application-dev.yml
 /knowledgebase/src/main/resources/application.yml
 /knowledgebase/src/main/resources/application-dev.yml
+/gateway/src/main/resources/application-dev.yml
