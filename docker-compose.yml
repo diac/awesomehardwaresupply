@@ -14,6 +14,8 @@ services:
       context: .
       dockerfile: authentication/Dockerfile
     container_name: awesomehardwaresupply_app_authentication
+    environment:
+      - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
   ### Knowledgebase ###
   app_knowledgebase:
     image: ndiac/awesomehardwaresupply_app_knowledgebase
@@ -21,3 +23,5 @@ services:
       context: .
       dockerfile: knowledgebase/Dockerfile
     container_name: awesomehardwaresupply_app_knowledgebase
+    environment:
+      - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
