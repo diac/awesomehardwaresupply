@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: knowledgebase-deployment
+  labels:
+    app: knowledgebase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: knowledgebase
+  template:
+    metadata:
+      labels:
+        app: knowledgebase
+    spec:
+      containers:
+        - name: knowledgebase
+          image: ndiac/awesomehardwaresupply_app_knowledgebase
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: knowledgebase-db-configmap
+                  key: database_url
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: knowledgebase-db-secret
+                  key: postgres-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: knowledgebase-db-secret
+                  key: postgres-password
+            - name: SECURITY_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: security-jwt-secret
+            - name: SECURITY_B-CRYPT-ENCODER-STRENGTH
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: security-b-crypt-encoder-strength
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: knowledgebase-service
+spec:
+  selector:
+    app: knowledgebase
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
