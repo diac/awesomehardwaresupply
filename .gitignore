@@ -44,3 +44,4 @@ build/
 /k8s/authentication-db-configmap.yml
 /k8s/authentication-db-secret.yml
 /k8s/jwt-secret.yml
+/k8s/knowledgebase-db-secret.yml
