@@ -39,7 +39,6 @@ build/
 .DS_Store
 /.idea/
 /knowledgebase/src/main/resources/application.properties
-/authentication/src/main/resources/application.yml
 /gateway/src/main/resources/application.yml
 /k8s/authentication-db-configmap.yml
 /k8s/authentication-db-secret.yml
@@ -47,3 +46,4 @@ build/
 /k8s/knowledgebase-db-secret.yml
 /k8s/knowledgebase-db-configmap.yml
 /k8s/gateway-configmap.yml
+/authentication/src/main/resources/application-dev.yml
