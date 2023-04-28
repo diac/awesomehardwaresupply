@@ -48,3 +48,5 @@ build/
 /k8s/knowledgebase-db-configmap.yml
 /k8s/gateway-configmap.yml
 /authentication/src/main/resources/application-dev.yml
+/knowledgebase/src/main/resources/application.yml
+/knowledgebase/src/main/resources/application-dev.yml
