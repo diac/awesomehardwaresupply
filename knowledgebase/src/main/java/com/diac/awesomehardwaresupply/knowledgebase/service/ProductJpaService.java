@@ -3,7 +3,6 @@ package com.diac.awesomehardwaresupply.knowledgebase.service;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.Product;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,7 +53,7 @@ public class ProductJpaService implements ProductService {
      *
      * @param id Идентификатор товара
      * @return Товар
-     * @throws EntityNotFoundException Если ничего не найдено
+     * @throws ResourceNotFoundException Если ничего не найдено
      */
     @Override
     public Product findById(int id) {
@@ -69,7 +68,7 @@ public class ProductJpaService implements ProductService {
      *
      * @param sku Артикул
      * @return Товар
-     * @throws EntityNotFoundException Если ничего не найдено
+     * @throws ResourceNotFoundException Если ничего не найдено
      */
     @Override
     public Product findBySku(String sku) {
@@ -96,7 +95,7 @@ public class ProductJpaService implements ProductService {
      * @param id      Идентификатор товара, данные которого необходимо обновить
      * @param product Объект с обновленными данными товара
      * @return Обновленный товар
-     * @throws EntityNotFoundException При попытке обновить несуществующий товар
+     * @throws ResourceNotFoundException При попытке обновить несуществующий товар
      */
     @Override
     public Product update(int id, Product product) {
@@ -113,7 +112,7 @@ public class ProductJpaService implements ProductService {
      * Удалить товар из системы
      *
      * @param id Идентификатор товара, который необходимо удалить
-     * @throws EntityNotFoundException При попытке удалить несуществующий товар
+     * @throws ResourceNotFoundException При попытке удалить несуществующий товар
      */
     @Override
     public void delete(int id) {
