@@ -75,7 +75,7 @@ public class ProductController {
      * Добавить новый товар в систему
      *
      * @param product Новый товар
-     * @return Ответ с созданым товаром
+     * @return Ответ с созданным товаром
      */
     @PostMapping("")
     public ResponseEntity<Product> post(@RequestBody @Valid Product product) {
