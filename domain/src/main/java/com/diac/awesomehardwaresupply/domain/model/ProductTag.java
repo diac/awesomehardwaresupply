@@ -42,6 +42,8 @@ public class ProductTag {
     /**
      * Фильтр, к которому принадлежит тэг
      */
+    @ManyToOne
+    @JoinColumn(name = "product_filter_id")
     @NotNull(message = "Associated Product Filter is required")
     private ProductFilter productFilter;
 }
