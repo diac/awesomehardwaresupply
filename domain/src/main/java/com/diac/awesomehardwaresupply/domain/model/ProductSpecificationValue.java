@@ -33,6 +33,8 @@ public class ProductSpecificationValue {
     /**
      * Спецификация, которой принадлежит значение
      */
+    @ManyToOne
+    @JoinColumn(name = "product_specification_id")
     @NotNull(message = "Associated Product Specification is required")
     private ProductSpecification productSpecification;
 }
