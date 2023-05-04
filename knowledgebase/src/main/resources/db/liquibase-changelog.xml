@@ -12,4 +12,5 @@
     <include file="scripts/005_ddl_create_table_product_specification.sql" relativeToChangelogFile="true"/>
     <include file="scripts/006_ddl_create_table_product_specification_value.sql" relativeToChangelogFile="true"/>
     <include file="scripts/007_ddl_create_table_product_specification_value_range.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/008_ddl_alter_table_product_add_product_category_id.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
