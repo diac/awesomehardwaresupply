@@ -45,4 +45,12 @@ public class Product {
     @NotNull(message = "Product sku is required")
     @NotBlank(message = "Product sku cannot be blank")
     private String sku;
+
+    /**
+     * Категория товара
+     */
+    @ManyToOne
+    @JoinColumn(name = "product_category_id")
+    @NotNull(message = "Product Category is required")
+    private ProductCategory productCategory;
 }
