@@ -1,7 +1,7 @@
 CREATE TABLE product_specification_value_range (
     id SERIAL PRIMARY KEY,
-    value_min FLOAT NOT NULL,
-    value_max FLOAT NOT NULL,
+    value_min REAL NOT NULL,
+    value_max REAL NOT NULL,
     product_specification_id INTEGER REFERENCES product_specification(id)
 );
 
