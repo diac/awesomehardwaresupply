@@ -34,6 +34,7 @@ public class ProductFilterController {
      * @param pageNumber Номер страницы
      * @return Страница с фильтрами
      */
+    @GetMapping("")
     public ResponseEntity<Page<ProductFilter>> index(
             @RequestParam(name = "page", required = false, defaultValue = "1") int pageNumber
     ) {
