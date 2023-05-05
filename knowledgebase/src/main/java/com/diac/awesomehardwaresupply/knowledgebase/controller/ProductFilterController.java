@@ -75,6 +75,7 @@ public class ProductFilterController {
      * Обновить данные фильтра товаров
      *
      * @param id Идентификатор фильтра
+     * @param productFilter Объект с обновленными данными фильтра
      * @return Ответ с обновленным фильтром
      */
     @PutMapping("/{id}")
