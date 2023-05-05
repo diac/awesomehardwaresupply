@@ -1,6 +1,7 @@
 package com.diac.awesomehardwaresupply.knowledgebase.repository;
 
 import com.diac.awesomehardwaresupply.domain.model.Product;
+import com.diac.awesomehardwaresupply.domain.model.ProductCategory;
 import com.diac.awesomehardwaresupply.knowledgebase.config.DataConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,24 @@ public class ProductRepositoryTest {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private ProductCategoryRepository productCategoryRepository;
+
     @Test
     public void whenFindAll() {
         String value = "test";
+        ProductCategory productCategory = productCategoryRepository.save(
+                ProductCategory.builder()
+                        .name(value)
+                        .description(value)
+                        .build()
+        );
         Product product = productRepository.save(
                 Product.builder()
                         .name(value)
                         .description(value)
                         .sku(value)
+                        .productCategory(productCategory)
                         .build()
         );
         assertThat(productRepository.findAll()).contains(product);
@@ -35,11 +46,18 @@ public class ProductRepositoryTest {
     @Test
     public void whenFindById() {
         String value = "test";
+        ProductCategory productCategory = productCategoryRepository.save(
+                ProductCategory.builder()
+                        .name(value)
+                        .description(value)
+                        .build()
+        );
         Product product = productRepository.save(
                 Product.builder()
                         .name(value)
                         .description(value)
                         .sku(value)
+                        .productCategory(productCategory)
                         .build()
         );
         Product productInDb = productRepository.findById(product.getId()).orElse(new Product());
@@ -49,11 +67,18 @@ public class ProductRepositoryTest {
     @Test
     public void whenFindBySku() {
         String value = "test";
+        ProductCategory productCategory = productCategoryRepository.save(
+                ProductCategory.builder()
+                        .name(value)
+                        .description(value)
+                        .build()
+        );
         Product product = productRepository.save(
                 Product.builder()
                         .name(value)
                         .description(value)
                         .sku(value)
+                        .productCategory(productCategory)
                         .build()
         );
         Product productInDb = productRepository.findBySku(value).orElse(new Product());
@@ -63,11 +88,18 @@ public class ProductRepositoryTest {
     @Test
     public void whenAdd() {
         String value = "test";
+        ProductCategory productCategory = productCategoryRepository.save(
+                ProductCategory.builder()
+                        .name(value)
+                        .description(value)
+                        .build()
+        );
         Product product = productRepository.save(
                 Product.builder()
                         .name(value)
                         .description(value)
                         .sku(value)
+                        .productCategory(productCategory)
                         .build()
         );
         assertThat(product.getName()).isEqualTo(value);
@@ -79,11 +111,18 @@ public class ProductRepositoryTest {
     public void whenUpdate() {
         String value = "test";
         String updatedValue = value + "_updated";
+        ProductCategory productCategory = productCategoryRepository.save(
+                ProductCategory.builder()
+                        .name(value)
+                        .description(value)
+                        .build()
+        );
         Product product = productRepository.save(
                 Product.builder()
                         .name(value)
                         .description(value)
                         .sku(value)
+                        .productCategory(productCategory)
                         .build()
         );
         product.setName(updatedValue);
@@ -99,11 +138,18 @@ public class ProductRepositoryTest {
     @Test
     public void whenDelete() {
         String value = "test";
+        ProductCategory productCategory = productCategoryRepository.save(
+                ProductCategory.builder()
+                        .name(value)
+                        .description(value)
+                        .build()
+        );
         Product product = productRepository.save(
                 Product.builder()
                         .name(value)
                         .description(value)
                         .sku(value)
+                        .productCategory(productCategory)
                         .build()
         );
         productRepository.delete(product);
