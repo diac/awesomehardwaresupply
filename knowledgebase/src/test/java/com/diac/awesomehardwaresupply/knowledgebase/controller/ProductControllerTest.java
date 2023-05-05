@@ -2,6 +2,7 @@ package com.diac.awesomehardwaresupply.knowledgebase.controller;
 
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.Product;
+import com.diac.awesomehardwaresupply.domain.model.ProductCategory;
 import com.diac.awesomehardwaresupply.knowledgebase.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -99,12 +100,14 @@ public class ProductControllerTest {
                 .name(value)
                 .description(value)
                 .sku(value)
+                .productCategory(ProductCategory.builder().id(1).build())
                 .build();
         Product savedProduct = Product.builder()
                 .id(id)
                 .name(value)
                 .description(value)
                 .sku(value)
+                .productCategory(ProductCategory.builder().id(1).build())
                 .build();
         String requestBody = objectWriter.writeValueAsString(newProduct);
         String responseBody = objectWriter.writeValueAsString(savedProduct);
@@ -123,6 +126,7 @@ public class ProductControllerTest {
                 .name(null)
                 .description(null)
                 .sku(null)
+                .productCategory(null)
                 .build();
         String requestBody = objectWriter.writeValueAsString(product);
         mockMvc.perform(
@@ -156,6 +160,7 @@ public class ProductControllerTest {
                 .name(value)
                 .description(value)
                 .sku(value)
+                .productCategory(ProductCategory.builder().id(1).build())
                 .build();
         String jsonValue = objectWriter.writeValueAsString(product);
         String requestUrl = String.format("/product/%d", id);
@@ -176,6 +181,7 @@ public class ProductControllerTest {
                 .name(null)
                 .description(null)
                 .sku(null)
+                .productCategory(null)
                 .build();
         String jsonValue = objectWriter.writeValueAsString(product);
         String requestUrl = String.format("/product/%d", id);
