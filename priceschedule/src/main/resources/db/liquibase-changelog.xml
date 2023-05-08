@@ -10,4 +10,5 @@
     <include file="scripts/003_ddl_create_table_customer_pricing.sql" relativeToChangelogFile="true"/>
     <include file="scripts/004_ddl_create_table_price_code_pricing.sql" relativeToChangelogFile="true"/>
     <include file="scripts/005_ddl_create_table_product_pricing.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/006_ddl_create_table_pricing_step.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
