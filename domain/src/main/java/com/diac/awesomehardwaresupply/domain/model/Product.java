@@ -88,4 +88,25 @@ public class Product {
             inverseJoinColumns = {@JoinColumn(name = "product_specification_value_range_id")}
     )
     private List<ProductSpecificationValueRange> productSpecificationValueRanges;
+
+    /**
+     * Цена товара по прейскуранту
+     */
+    @NotNull(message = "Product list price is required")
+    @Column(name = "list_price")
+    private Integer listPrice;
+
+    /**
+     * Стоимость товара
+     */
+    @NotNull(message = "Product cost is required")
+    private Integer cost;
+
+    /**
+     * Код товара
+     */
+    @Column(name = "price_code")
+    @NotNull(message = "Product price code is required")
+    @NotBlank(message = "Product price code cannot be blank")
+    private String priceCode;
 }
