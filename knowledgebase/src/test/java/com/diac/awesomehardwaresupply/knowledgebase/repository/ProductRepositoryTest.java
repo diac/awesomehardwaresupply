@@ -38,6 +38,9 @@ public class ProductRepositoryTest {
                         .description(value)
                         .sku(value)
                         .productCategory(productCategory)
+                        .listPrice(1000)
+                        .cost(1000)
+                        .priceCode(value)
                         .build()
         );
         assertThat(productRepository.findAll()).contains(product);
@@ -58,6 +61,9 @@ public class ProductRepositoryTest {
                         .description(value)
                         .sku(value)
                         .productCategory(productCategory)
+                        .listPrice(1000)
+                        .cost(1000)
+                        .priceCode(value)
                         .build()
         );
         Product productInDb = productRepository.findById(product.getId()).orElse(new Product());
@@ -79,6 +85,9 @@ public class ProductRepositoryTest {
                         .description(value)
                         .sku(value)
                         .productCategory(productCategory)
+                        .listPrice(1000)
+                        .cost(1000)
+                        .priceCode(value)
                         .build()
         );
         Product productInDb = productRepository.findBySku(value).orElse(new Product());
@@ -100,6 +109,9 @@ public class ProductRepositoryTest {
                         .description(value)
                         .sku(value)
                         .productCategory(productCategory)
+                        .listPrice(1000)
+                        .cost(1000)
+                        .priceCode(value)
                         .build()
         );
         assertThat(product.getName()).isEqualTo(value);
@@ -123,6 +135,9 @@ public class ProductRepositoryTest {
                         .description(value)
                         .sku(value)
                         .productCategory(productCategory)
+                        .listPrice(1000)
+                        .cost(1000)
+                        .priceCode(value)
                         .build()
         );
         product.setName(updatedValue);
@@ -150,6 +165,9 @@ public class ProductRepositoryTest {
                         .description(value)
                         .sku(value)
                         .productCategory(productCategory)
+                        .listPrice(1000)
+                        .cost(1000)
+                        .priceCode(value)
                         .build()
         );
         productRepository.delete(product);
