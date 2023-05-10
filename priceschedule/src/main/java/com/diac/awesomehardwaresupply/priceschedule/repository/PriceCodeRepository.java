@@ -1,4 +1,4 @@
-package com.diac.awesomehardwaresupply.priceschedule.respository;
+package com.diac.awesomehardwaresupply.priceschedule.repository;
 
 import com.diac.awesomehardwaresupply.domain.model.PriceCode;
 import org.springframework.data.jpa.repository.JpaRepository;
