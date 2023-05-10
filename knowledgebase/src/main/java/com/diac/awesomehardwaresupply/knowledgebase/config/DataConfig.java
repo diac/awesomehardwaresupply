@@ -13,7 +13,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableJpaRepositories("com.diac")
+@EnableJpaRepositories("com.diac.awesomehardwaresupply.knowledgebase.repository")
 public class DataConfig {
 
     private static final String DOMAIN_MODEL_PACKAGE_LOCATION = "com.diac.awesomehardwaresupply.domain.model";
