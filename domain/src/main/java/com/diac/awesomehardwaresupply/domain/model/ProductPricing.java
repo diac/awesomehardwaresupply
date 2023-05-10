@@ -46,7 +46,7 @@ public class ProductPricing {
     /**
      * Шаги ценообразования
      */
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_pricing_pricing_step",
             joinColumns = {@JoinColumn(name = "product_pricing_id")},
