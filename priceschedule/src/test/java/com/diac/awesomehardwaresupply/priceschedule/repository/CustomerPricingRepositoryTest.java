@@ -1,11 +1,16 @@
 package com.diac.awesomehardwaresupply.priceschedule.repository;
 
+import com.diac.awesomehardwaresupply.domain.enumeration.PricingMethod;
 import com.diac.awesomehardwaresupply.domain.model.CustomerPricing;
+import com.diac.awesomehardwaresupply.domain.model.PricingStep;
 import com.diac.awesomehardwaresupply.priceschedule.config.DataConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +30,16 @@ public class CustomerPricingRepositoryTest {
                 CustomerPricing.builder()
                         .customerNumber(value)
                         .productSku(value)
+                        .pricingSteps(
+                                List.of(
+                                        PricingStep.builder()
+                                                .priceAdjustment(1000)
+                                                .maxQuantity(1000)
+                                                .minQuantity(1000)
+                                                .pricingMethod(PricingMethod.PRICE_OVERRIDE)
+                                                .build()
+                                )
+                        )
                         .build()
         );
         assertThat(customerPricingRepository.findAll()).contains(customerPricing);
@@ -37,6 +52,16 @@ public class CustomerPricingRepositoryTest {
                 CustomerPricing.builder()
                         .customerNumber(value)
                         .productSku(value)
+                        .pricingSteps(
+                                List.of(
+                                        PricingStep.builder()
+                                                .priceAdjustment(1000)
+                                                .maxQuantity(1000)
+                                                .minQuantity(1000)
+                                                .pricingMethod(PricingMethod.PRICE_OVERRIDE)
+                                                .build()
+                                )
+                        )
                         .build()
         );
         CustomerPricing customerPricingInDb = customerPricingRepository.findById(customerPricing.getId())
@@ -51,6 +76,16 @@ public class CustomerPricingRepositoryTest {
                 CustomerPricing.builder()
                         .customerNumber(value)
                         .productSku(value)
+                        .pricingSteps(
+                                List.of(
+                                        PricingStep.builder()
+                                                .priceAdjustment(1000)
+                                                .maxQuantity(1000)
+                                                .minQuantity(1000)
+                                                .pricingMethod(PricingMethod.PRICE_OVERRIDE)
+                                                .build()
+                                )
+                        )
                         .build()
         );
         assertThat(customerPricing.getCustomerNumber()).isEqualTo(value);
@@ -65,10 +100,21 @@ public class CustomerPricingRepositoryTest {
                 CustomerPricing.builder()
                         .customerNumber(value)
                         .productSku(value)
+                        .pricingSteps(
+                                List.of(
+                                        PricingStep.builder()
+                                                .priceAdjustment(1000)
+                                                .maxQuantity(1000)
+                                                .minQuantity(1000)
+                                                .pricingMethod(PricingMethod.PRICE_OVERRIDE)
+                                                .build()
+                                )
+                        )
                         .build()
         );
         customerPricing.setCustomerNumber(updatedValue);
         customerPricing.setProductSku(updatedValue);
+        customerPricing.setPricingSteps(Collections.emptyList());
         CustomerPricing updatedCustomerPricing = customerPricingRepository.save(customerPricing);
         assertThat(customerPricing).isEqualTo(updatedCustomerPricing);
         assertThat(customerPricing.getProductSku()).isEqualTo(updatedCustomerPricing.getProductSku());
@@ -82,6 +128,16 @@ public class CustomerPricingRepositoryTest {
                 CustomerPricing.builder()
                         .customerNumber(value)
                         .productSku(value)
+                        .pricingSteps(
+                                List.of(
+                                        PricingStep.builder()
+                                                .priceAdjustment(1000)
+                                                .maxQuantity(1000)
+                                                .minQuantity(1000)
+                                                .pricingMethod(PricingMethod.PRICE_OVERRIDE)
+                                                .build()
+                                )
+                        )
                         .build()
         );
         customerPricingRepository.delete(customerPricing);
