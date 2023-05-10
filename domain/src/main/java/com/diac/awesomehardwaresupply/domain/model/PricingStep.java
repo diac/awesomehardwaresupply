@@ -28,6 +28,7 @@ public class PricingStep {
     /**
      * Метод ценообразования
      */
+    @Column(name = "pricing_method")
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Pricing method is required")
     private PricingMethod pricingMethod;
