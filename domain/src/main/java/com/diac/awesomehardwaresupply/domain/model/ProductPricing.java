@@ -46,7 +46,7 @@ public class ProductPricing {
     /**
      * Шаги ценообразования
      */
-    @ManyToOne
+    @ManyToMany
     @JoinTable(
             name = "product_pricing_pricing_step",
             joinColumns = {@JoinColumn(name = "product_pricing_id")},
