@@ -1,14 +1,13 @@
-package com.diac.awesomehardwaresupply.priceschedule.respository;
+package com.diac.awesomehardwaresupply.priceschedule.repository;
 
 import com.diac.awesomehardwaresupply.domain.model.PriceCode;
 import com.diac.awesomehardwaresupply.priceschedule.config.DataConfig;
-import com.diac.awesomehardwaresupply.priceschedule.repository.PriceCodeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ContextConfiguration(classes = {
