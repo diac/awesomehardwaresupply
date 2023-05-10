@@ -101,6 +101,9 @@ public class ProductControllerTest {
                 .description(value)
                 .sku(value)
                 .productCategory(ProductCategory.builder().id(1).build())
+                .listPrice(1000)
+                .cost(1000)
+                .priceCode(value)
                 .build();
         Product savedProduct = Product.builder()
                 .id(id)
@@ -108,6 +111,9 @@ public class ProductControllerTest {
                 .description(value)
                 .sku(value)
                 .productCategory(ProductCategory.builder().id(1).build())
+                .listPrice(1000)
+                .cost(1000)
+                .priceCode(value)
                 .build();
         String requestBody = objectWriter.writeValueAsString(newProduct);
         String responseBody = objectWriter.writeValueAsString(savedProduct);
@@ -161,6 +167,9 @@ public class ProductControllerTest {
                 .description(value)
                 .sku(value)
                 .productCategory(ProductCategory.builder().id(1).build())
+                .listPrice(1000)
+                .cost(1000)
+                .priceCode(value)
                 .build();
         String jsonValue = objectWriter.writeValueAsString(product);
         String requestUrl = String.format("/product/%d", id);
