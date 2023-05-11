@@ -17,6 +17,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PriceCodeJpaService implements PriceCodeService {
 
+    /**
+     * Шаблон сообщения о том, что код цены не найден
+     */
     private static final String PRICE_CODE_DOES_NOT_EXIST_MESSAGE = "Price code #%s does not exist";
 
     /**
@@ -25,9 +28,9 @@ public class PriceCodeJpaService implements PriceCodeService {
     private final PriceCodeRepository priceCodeRepository;
 
     /**
-     * Найти все коды товаров
+     * Найти все коды цен
      *
-     * @return Список кодов товаров
+     * @return Список кодов цен
      */
     @Override
     public List<PriceCode> findAll() {
@@ -35,10 +38,10 @@ public class PriceCodeJpaService implements PriceCodeService {
     }
 
     /**
-     * Получить страницу с кодами товаров
+     * Получить страницу с кодами цен
      *
      * @param pageRequest Объект PageRequest
-     * @return Страница с кодами товаров
+     * @return Страница с кодами цен
      */
     @Override
     public Page<PriceCode> getPage(PageRequest pageRequest) {
@@ -46,10 +49,10 @@ public class PriceCodeJpaService implements PriceCodeService {
     }
 
     /**
-     * Найти код товаров по ID
+     * Найти код цены по ID
      *
-     * @param id Идентификатор кода товаров
-     * @return Код товаров
+     * @param id Идентификатор кода цен
+     * @return Код цены
      */
     @Override
     public PriceCode findById(int id) {
@@ -60,10 +63,10 @@ public class PriceCodeJpaService implements PriceCodeService {
     }
 
     /**
-     * Добавить новый код товаров в систему
+     * Добавить новый код цены в систему
      *
-     * @param priceCode Новый код товаров
-     * @return Сохраненный код товаров
+     * @param priceCode Новый код цены
+     * @return Сохраненный код цены
      */
     @Override
     public PriceCode add(PriceCode priceCode) {
@@ -71,11 +74,11 @@ public class PriceCodeJpaService implements PriceCodeService {
     }
 
     /**
-     * Обновить данные кода товаров в системе
+     * Обновить данные кода цены в системе
      *
-     * @param id        Идентификатор кода товаров, данные которого необходимо обновить
-     * @param priceCode Объект с обновленными данными кода товаров
-     * @return Обновленный код товаров
+     * @param id        Идентификатор кода цены, данные которого необходимо обновить
+     * @param priceCode Объект с обновленными данными кода цены
+     * @return Обновленный код цены
      */
     @Override
     public PriceCode update(int id, PriceCode priceCode) {
@@ -89,7 +92,7 @@ public class PriceCodeJpaService implements PriceCodeService {
     }
 
     /**
-     * Удалить код товаров из системы
+     * Удалить код цены из системы
      *
      * @param id Идентификатор кода товаров, который необходимо удалить
      */
