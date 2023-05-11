@@ -1,4 +1,4 @@
-package com.diac.awesomehardwaresupply.knowledgebase.dto;
+package com.diac.awesomehardwaresupply.domain.dto;
 
 /**
  * DTO ответа с ценой товара
