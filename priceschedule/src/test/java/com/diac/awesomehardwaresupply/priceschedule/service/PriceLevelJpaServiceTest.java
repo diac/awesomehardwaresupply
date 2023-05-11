@@ -111,6 +111,18 @@ public class PriceLevelJpaServiceTest {
     }
 
     @Test
+    public void whenUpdateNonExistentThenThrowException() {
+        int id = 1;
+        PriceLevel priceLevel = PriceLevel.builder()
+                .id(id)
+                .build();
+        Mockito.when(priceLevelRepository.findById(id)).thenReturn(Optional.empty());
+        assertThatThrownBy(
+                () -> priceLevelService.update(id, priceLevel)
+        ).isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
     public void whenDelete() {
         int id = 1;
         PriceLevel priceLevel = PriceLevel.builder()
