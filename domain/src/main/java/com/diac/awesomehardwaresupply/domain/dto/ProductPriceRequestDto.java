@@ -22,6 +22,12 @@ public class ProductPriceRequestDto {
     private String productSku;
 
     /**
+     * Количество единиц товара
+     */
+    @NotNull(message = "Quantity is required")
+    private Integer quantity;
+
+    /**
      * Номер клиента
      */
     private String customerNumber;
