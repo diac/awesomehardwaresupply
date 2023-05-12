@@ -70,6 +70,30 @@ public class CustomerPricingRepositoryTest {
     }
 
     @Test
+    public void whenFindByCustomerNumberAndProductSku() {
+        String value = "test";
+        CustomerPricing customerPricing = customerPricingRepository.save(
+                CustomerPricing.builder()
+                        .customerNumber(value)
+                        .productSku(value)
+                        .pricingSteps(
+                                List.of(
+                                        PricingStep.builder()
+                                                .priceAdjustment(1000)
+                                                .maxQuantity(1000)
+                                                .minQuantity(1000)
+                                                .pricingMethod(PricingMethod.PRICE_OVERRIDE)
+                                                .build()
+                                )
+                        )
+                        .build()
+        );
+        CustomerPricing customerPricingInDb = customerPricingRepository.findByCustomerNumberAndProductSku(value, value)
+                .orElse(new CustomerPricing());
+        assertThat(customerPricingInDb).isEqualTo(customerPricing);
+    }
+
+    @Test
     public void whenAdd() {
         String value = "test";
         CustomerPricing customerPricing = customerPricingRepository.save(
