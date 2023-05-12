@@ -101,6 +101,41 @@ public class PriceCodePricingRepositoryTest {
     }
 
     @Test
+    public void whenFindByPriceLevelAndPriceCode() {
+        String value = "test";
+        PriceCode priceCode = priceCodeRepository.save(
+                PriceCode.builder()
+                        .name(value)
+                        .build()
+        );
+        PriceLevel priceLevel = priceLevelRepository.save(
+                PriceLevel.builder()
+                        .name(value)
+                        .build()
+        );
+        PriceCodePricing priceCodePricing = priceCodePricingRepository.save(
+                PriceCodePricing.builder()
+                        .priceCode(priceCode)
+                        .priceLevel(priceLevel)
+                        .pricingSteps(
+                                List.of(
+                                        PricingStep.builder()
+                                                .priceAdjustment(1000)
+                                                .maxQuantity(1000)
+                                                .minQuantity(1000)
+                                                .pricingMethod(PricingMethod.PRICE_OVERRIDE)
+                                                .build()
+                                )
+                        )
+                        .build()
+        );
+        PriceCodePricing priceCodePricingInDb
+                = priceCodePricingRepository.findByPriceLevelAndPriceCode(priceLevel, priceCode)
+                .orElse(new PriceCodePricing());
+        assertThat(priceCodePricingInDb).isEqualTo(priceCodePricing);
+    }
+
+    @Test
     public void whenAdd() {
         String value = "test";
         PriceCode priceCode = priceCodeRepository.save(
