@@ -86,6 +86,35 @@ public class ProductPricingRepositoryTest {
     }
 
     @Test
+    public void whenFindByProductSkuAndPriceLevel() {
+        String value = "test";
+        PriceLevel priceLevel = priceLevelRepository.save(
+                PriceLevel.builder()
+                        .name(value)
+                        .build()
+        );
+        ProductPricing productPricing = productPricingRepository.save(
+                ProductPricing.builder()
+                        .productSku(value)
+                        .priceLevel(priceLevel)
+                        .pricingSteps(
+                                List.of(
+                                        PricingStep.builder()
+                                                .priceAdjustment(1000)
+                                                .maxQuantity(1000)
+                                                .minQuantity(1000)
+                                                .pricingMethod(PricingMethod.PRICE_OVERRIDE)
+                                                .build()
+                                )
+                        )
+                        .build()
+        );
+        ProductPricing productPricingInDb = productPricingRepository.findByProductSkuAndPriceLevel(value, priceLevel)
+                .orElse(new ProductPricing());
+        assertThat(productPricingInDb).isEqualTo(productPricing);
+    }
+
+    @Test
     public void whenAdd() {
         String value = "test";
         PriceLevel priceLevel = priceLevelRepository.save(
