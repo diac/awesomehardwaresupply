@@ -30,6 +30,7 @@ public class ProductDetail {
      */
     @NotNull(message = "Product SKU is required")
     @NotBlank(message = "Product SKU cannot be blank")
+    @Column(name = "product_sku")
     private String productSku;
 
     /**
