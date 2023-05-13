@@ -63,6 +63,20 @@ public class PriceCodeJpaService implements PriceCodeService {
     }
 
     /**
+     * Найти код цены по имени
+     *
+     * @param name Имя кода цены
+     * @return Optional с кодом цены. Пустой Optional, если ничего не найдено
+     */
+    @Override
+    public PriceCode findByName(String name) {
+        return priceCodeRepository.findByName(name)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(String.format(PRICE_CODE_DOES_NOT_EXIST_MESSAGE, name))
+                );
+    }
+
+    /**
      * Добавить новый код цены в систему
      *
      * @param priceCode Новый код цены

@@ -35,6 +35,14 @@ public interface PriceCodeService {
     PriceCode findById(int id);
 
     /**
+     * Найти код цены по имени
+     *
+     * @param name Имя кода цены
+     * @return Optional с кодом цены. Пустой Optional, если ничего не найдено
+     */
+    PriceCode findByName(String name);
+
+    /**
      * Добавить новый код цены в систему
      *
      * @param priceCode Новый код цены

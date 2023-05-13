@@ -15,7 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = {
         PriceCodeJpaService.class
@@ -78,6 +79,28 @@ public class PriceCodeJpaServiceTest {
         Mockito.when(priceCodeRepository.findById(id)).thenReturn(Optional.empty());
         assertThatThrownBy(
                 () -> priceCodeService.findById(id)
+        ).isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    public void whenFindByNameFound() {
+        int id = 1;
+        String value = "test";
+        PriceCode priceCode = PriceCode.builder()
+                .id(id)
+                .name(value)
+                .build();
+        Mockito.when(priceCodeRepository.findByName(value)).thenReturn(Optional.of(priceCode));
+        assertThat(priceCodeService.findByName(value)).isEqualTo(priceCode);
+        Mockito.verify(priceCodeRepository).findByName(value);
+    }
+
+    @Test
+    public void whenFindByNameNotFoundThenThrowException() {
+        String value = "test";
+        Mockito.when(priceCodeRepository.findByName(value)).thenReturn(Optional.empty());
+        assertThatThrownBy(
+                () -> priceCodeService.findByName(value)
         ).isInstanceOf(ResourceNotFoundException.class);
     }
 
