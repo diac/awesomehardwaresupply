@@ -43,6 +43,19 @@ public class PriceCodeRepositoryTest {
     }
 
     @Test
+    public void whenFindByName() {
+        String value = "test";
+        PriceCode priceCode = priceCodeRepository.save(
+                PriceCode.builder()
+                        .name(value)
+                        .build()
+        );
+        PriceCode priceCodeInDb = priceCodeRepository.findByName(value)
+                .orElse(new PriceCode());
+        assertThat(priceCodeInDb).isEqualTo(priceCode);
+    }
+
+    @Test
     public void whenAdd() {
         String value = "test";
         PriceCode priceCode = priceCodeRepository.save(
