@@ -6,6 +6,7 @@ import com.diac.awesomehardwaresupply.domain.enumeration.PricingMethod;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.*;
 import com.diac.awesomehardwaresupply.priceschedule.repository.*;
+import com.diac.awesomehardwaresupply.priceschedule.utility.PricingAdjustments;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -128,12 +129,22 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                 modifier ->
                         switch (modifier.pricingMethod) {
                             case PRICE_OVERRIDE -> modifier.priceAdjustment;
-                            case COST_MARKUP_AMOUNT -> productDetail.getCost() + modifier.priceAdjustment;
-                            case COST_MARKUP_PERCENTAGE -> productDetail.getCost()
-                                    + (productDetail.getCost() * modifier.priceAdjustment / 100);
-                            case PRICE_DISCOUNT_AMOUNT -> productDetail.getListPrice() - modifier.priceAdjustment;
-                            case PRICE_DISCOUNT_PERCENTAGE -> productDetail.getListPrice()
-                                    - (productDetail.getListPrice() * modifier.priceAdjustment / 100);
+                            case COST_MARKUP_AMOUNT -> PricingAdjustments.costMarkupAmount(
+                                    productDetail.getCost(),
+                                    modifier.priceAdjustment
+                            );
+                            case COST_MARKUP_PERCENTAGE -> PricingAdjustments.costMarkupPercentage(
+                                    productDetail.getCost(),
+                                    modifier.priceAdjustment
+                            );
+                            case PRICE_DISCOUNT_AMOUNT -> PricingAdjustments.priceDiscountAmount(
+                                    productDetail.getCost(),
+                                    modifier.priceAdjustment
+                            );
+                            case PRICE_DISCOUNT_PERCENTAGE -> PricingAdjustments.priceDiscountPercentage(
+                                    productDetail.getCost(),
+                                    modifier.priceAdjustment
+                            );
                         }
         ).orElse(productDetail.getListPrice());
     }
