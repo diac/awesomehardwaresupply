@@ -43,6 +43,19 @@ public class PriceLevelRepositoryTest {
     }
 
     @Test
+    public void whenFindByName() {
+        String value = "test";
+        PriceLevel priceLevel = priceLevelRepository.save(
+                PriceLevel.builder()
+                        .name(value)
+                        .build()
+        );
+        PriceLevel priceLevelInDb = priceLevelRepository.findByName(value)
+                .orElse(new PriceLevel());
+        assertThat(priceLevelInDb).isEqualTo(priceLevel);
+    }
+
+    @Test
     public void whenAdd() {
         String value = "test";
         PriceLevel priceLevel = priceLevelRepository.save(
