@@ -82,6 +82,28 @@ public class PriceLevelJpaServiceTest {
     }
 
     @Test
+    public void whenFindByNameFound() {
+        int id = 1;
+        String value = "test";
+        PriceLevel priceLevel = PriceLevel.builder()
+                .id(id)
+                .name(value)
+                .build();
+        Mockito.when(priceLevelRepository.findByName(value)).thenReturn(Optional.of(priceLevel));
+        assertThat(priceLevelService.findByName(value)).isEqualTo(priceLevel);
+        Mockito.verify(priceLevelRepository).findByName(value);
+    }
+
+    @Test
+    public void whenFindByNameNotFoundThenThrowException() {
+        String value = "test";
+        Mockito.when(priceLevelRepository.findByName(value)).thenReturn(Optional.empty());
+        assertThatThrownBy(
+                () -> priceLevelService.findByName(value)
+        ).isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
     public void whenAdd() {
         String value = "test";
         PriceLevel priceLevel = PriceLevel.builder()

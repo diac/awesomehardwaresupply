@@ -63,6 +63,20 @@ public class PriceLevelJpaService implements PriceLevelService {
     }
 
     /**
+     * Найти уровень цен по имени
+     *
+     * @param name Имя уровня цен
+     * @return Уровень цен
+     */
+    @Override
+    public PriceLevel findByName(String name) {
+        return priceLevelRepository.findByName(name)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(String.format(PRICE_LEVEL_DOES_NOT_EXIST_MESSAGE, name))
+                );
+    }
+
+    /**
      * Добавить новый уровень цен в систему
      *
      * @param priceLevel Новый уровень цен

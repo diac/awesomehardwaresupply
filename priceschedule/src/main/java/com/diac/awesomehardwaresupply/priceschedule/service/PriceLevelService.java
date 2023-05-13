@@ -35,6 +35,14 @@ public interface PriceLevelService {
     PriceLevel findById(int id);
 
     /**
+     * Найти уровень цен по имени
+     *
+     * @param name Имя уровня цен
+     * @return Уровень цен
+     */
+    PriceLevel findByName(String name);
+
+    /**
      * Добавить новый уровень цен в систему
      *
      * @param priceLevel Новый уровень цен
