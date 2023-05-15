@@ -723,7 +723,7 @@ public class ProductPriceServiceImplTest {
                 )
         );
         ProductPriceResponseDto productPriceResponseDto = productPriceService.calculate(productPriceRequestDto);
-        int expectedPrice = PricingAdjustments.priceDiscountAmount(COST, CUSTOMER_PRICE_ADJUSTMENT);
+        int expectedPrice = PricingAdjustments.priceDiscountAmount(LIST_PRICE, CUSTOMER_PRICE_ADJUSTMENT);
         assertThat(productPriceResponseDto.calculatedPrice()).isEqualTo(expectedPrice);
     }
 
@@ -786,7 +786,7 @@ public class ProductPriceServiceImplTest {
                 )
         );
         ProductPriceResponseDto productPriceResponseDto = productPriceService.calculate(productPriceRequestDto);
-        int expectedPrice = PricingAdjustments.priceDiscountAmount(COST, PRODUCT_PRICE_ADJUSTMENT);
+        int expectedPrice = PricingAdjustments.priceDiscountAmount(LIST_PRICE, PRODUCT_PRICE_ADJUSTMENT);
         assertThat(productPriceResponseDto.calculatedPrice()).isEqualTo(expectedPrice);
     }
 
@@ -832,7 +832,7 @@ public class ProductPriceServiceImplTest {
                 )
         );
         ProductPriceResponseDto productPriceResponseDto = productPriceService.calculate(productPriceRequestDto);
-        int expectedPrice = PricingAdjustments.priceDiscountAmount(COST, PRICE_CODE_PRICE_ADJUSTMENT);
+        int expectedPrice = PricingAdjustments.priceDiscountAmount(LIST_PRICE, PRICE_CODE_PRICE_ADJUSTMENT);
         assertThat(productPriceResponseDto.calculatedPrice()).isEqualTo(expectedPrice);
     }
 
@@ -910,7 +910,7 @@ public class ProductPriceServiceImplTest {
                 )
         );
         ProductPriceResponseDto productPriceResponseDto = productPriceService.calculate(productPriceRequestDto);
-        int expectedPrice = PricingAdjustments.priceDiscountPercentage(COST, CUSTOMER_PRICE_ADJUSTMENT);
+        int expectedPrice = PricingAdjustments.priceDiscountPercentage(LIST_PRICE, CUSTOMER_PRICE_ADJUSTMENT);
         assertThat(productPriceResponseDto.calculatedPrice()).isEqualTo(expectedPrice);
     }
 
@@ -973,7 +973,7 @@ public class ProductPriceServiceImplTest {
                 )
         );
         ProductPriceResponseDto productPriceResponseDto = productPriceService.calculate(productPriceRequestDto);
-        int expectedPrice = PricingAdjustments.priceDiscountPercentage(COST, PRODUCT_PRICE_ADJUSTMENT);
+        int expectedPrice = PricingAdjustments.priceDiscountPercentage(LIST_PRICE, PRODUCT_PRICE_ADJUSTMENT);
         assertThat(productPriceResponseDto.calculatedPrice()).isEqualTo(expectedPrice);
     }
 
@@ -1019,7 +1019,7 @@ public class ProductPriceServiceImplTest {
                 )
         );
         ProductPriceResponseDto productPriceResponseDto = productPriceService.calculate(productPriceRequestDto);
-        int expectedPrice = PricingAdjustments.priceDiscountPercentage(COST, PRICE_CODE_PRICE_ADJUSTMENT);
+        int expectedPrice = PricingAdjustments.priceDiscountPercentage(LIST_PRICE, PRICE_CODE_PRICE_ADJUSTMENT);
         assertThat(productPriceResponseDto.calculatedPrice()).isEqualTo(expectedPrice);
     }
 
