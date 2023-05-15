@@ -78,7 +78,7 @@ public class PriceLevelRepositoryTest {
         priceLevel.setName(updatedValue);
         PriceLevel updatedPriceLevel = priceLevelRepository.save(priceLevel);
         assertThat(priceLevel).isEqualTo(updatedPriceLevel);
-        assertThat(priceLevel.getName()).isEqualTo(priceLevel.getName());
+        assertThat(updatedPriceLevel.getName()).isEqualTo(priceLevel.getName());
     }
 
     @Test
