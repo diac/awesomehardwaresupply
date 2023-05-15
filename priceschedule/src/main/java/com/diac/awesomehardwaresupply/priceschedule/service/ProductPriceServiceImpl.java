@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Сервис, реализующий логику расчета цен товаров
@@ -67,6 +68,24 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     @Override
     public ProductPriceResponseDto calculate(ProductPriceRequestDto productPriceRequestDto) {
         ProductDetail productDetail = productDetailService.findByProductSku(productPriceRequestDto.getProductSku());
+        PricingStep pricingStepMatch = getPricingStepMatch(productPriceRequestDto);
+        return new ProductPriceResponseDto(
+                productPriceRequestDto.getProductSku(),
+                calculateItemPrice(
+                        productDetail,
+                        pricingStepMatch.getPricingMethod(),
+                        pricingStepMatch.getPriceAdjustment()
+                )
+        );
+    }
+
+    /**
+     * Найти подходящий шаг ценообразования по переданному ProductPriceRequestDto
+     *
+     * @param productPriceRequestDto Объект ProductPriceRequestDto
+     * @return Шаг ценообразования
+     */
+    private PricingStep getPricingStepMatch(ProductPriceRequestDto productPriceRequestDto) {
         Optional<CustomerPricing> customerPricing = customerPricingRepository.findByCustomerNumberAndProductSku(
                 productPriceRequestDto.getCustomerNumber(),
                 productPriceRequestDto.getProductSku()
@@ -79,35 +98,14 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                 priceLevelRepository.findByName(productPriceRequestDto.getPriceLevel()).orElse(new PriceLevel()),
                 priceCodeRepository.findByName(productPriceRequestDto.getPriceCode()).orElse(new PriceCode())
         );
-        PricingStep pricingStepMatch = customerPricing.map(
-                pricing -> pricing.getPricingSteps()
-                        .stream()
-                        .filter(
-                                pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
-                                        && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
-                        )
-                        .findFirst()
+        return customerPricing.map(
+                pricingStepFilter(productPriceRequestDto.getQuantity())
         ).orElseGet(
                 () -> productPricing.map(
-                        pricing -> pricing.getPricingSteps()
-                                .stream()
-                                .filter(
-                                        pricingStep ->
-                                                productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
-                                                        && productPriceRequestDto.getQuantity()
-                                                        <= pricingStep.getMaxQuantity()
-                                )
-                                .findFirst()
+                        pricingStepFilter(productPriceRequestDto.getQuantity())
                 ).orElseGet(
-                        () -> priceCodePricing.flatMap(pricing -> pricing.getPricingSteps()
-                                .stream()
-                                .filter(
-                                        pricingStep -> productPriceRequestDto.getQuantity()
-                                                >= pricingStep.getMinQuantity()
-                                                && productPriceRequestDto.getQuantity()
-                                                <= pricingStep.getMaxQuantity()
-                                )
-                                .findFirst()
+                        () -> priceCodePricing.flatMap(
+                                pricingStepFilter(productPriceRequestDto.getQuantity())
                         )
                 )
         ).orElse(
@@ -116,16 +114,34 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                         .priceAdjustment(DEFAULT_PRICE_ADJUSTMENT)
                         .build()
         );
-        return new ProductPriceResponseDto(
-                productPriceRequestDto.getProductSku(),
-                calculateItemPrice(
-                        productDetail,
-                        pricingStepMatch.getPricingMethod(),
-                        pricingStepMatch.getPriceAdjustment()
-                )
-        );
     }
 
+    /**
+     * Функция-фильтр шагов ценообразования
+     *
+     * @param quantity Количество товаров в позиции
+     * @return Функция Function<Pricing, Optional<PricingStep>>, где Pricing -- правило ценообразования,
+     * а Optional<PricingStep> -- Optional с подходящим шагом ценообразования
+     */
+    private Function<Pricing, Optional<PricingStep>> pricingStepFilter(int quantity) {
+        return (pricing) -> pricing.getPricingSteps()
+                .stream()
+                .filter(
+                        pricingStep ->
+                                quantity >= pricingStep.getMinQuantity()
+                                        && quantity <= pricingStep.getMaxQuantity()
+                )
+                .findFirst();
+    }
+
+    /**
+     * Рассчитать цену товара в позиции
+     *
+     * @param productDetail   Подробности товара
+     * @param pricingMethod   Метод ценообразования
+     * @param priceAdjustment Величина корректировки цены
+     * @return Рассчитанная цена товара
+     */
     private int calculateItemPrice(ProductDetail productDetail, PricingMethod pricingMethod, int priceAdjustment) {
         PricingMethodFunctionFactory pricingMethodFunctionFactory = new PricingMethodFunctionFactory();
         return pricingMethodFunctionFactory.pricingMethodFunction(pricingMethod)
