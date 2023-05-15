@@ -143,8 +143,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
      * @return Рассчитанная цена товара
      */
     private int calculateItemPrice(ProductDetail productDetail, PricingMethod pricingMethod, int priceAdjustment) {
-        PricingMethodFunctionFactory pricingMethodFunctionFactory = new PricingMethodFunctionFactory();
-        return pricingMethodFunctionFactory.pricingMethodFunction(pricingMethod)
+        return new PricingMethodFunctionFactory(pricingMethod)
+                .getPricingMethodFunction()
                 .apply(productDetail, priceAdjustment);
     }
 }
