@@ -3,6 +3,7 @@ package com.diac.awesomehardwaresupply.priceschedule.service;
 import com.diac.awesomehardwaresupply.domain.dto.ProductPriceRequestDto;
 import com.diac.awesomehardwaresupply.domain.dto.ProductPriceResponseDto;
 import com.diac.awesomehardwaresupply.domain.enumeration.PricingMethod;
+import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.*;
 import com.diac.awesomehardwaresupply.priceschedule.repository.*;
 import com.diac.awesomehardwaresupply.priceschedule.utility.PricingAdjustments;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = {
         ProductPriceServiceImpl.class
@@ -56,17 +58,17 @@ public class ProductPriceServiceImplTest {
     private ProductPricingRepository productPricingRepository;
 
     @MockBean
-    private ProductDetailRepository productDetailRepository;
-
-    @MockBean
     private PriceLevelRepository priceLevelRepository;
 
     @MockBean
     private PriceCodeRepository priceCodeRepository;
 
+    @MockBean
+    private ProductDetailService productDetailService;
+
     @BeforeEach
     public void init() {
-        Mockito.when(productDetailRepository.findAll()).thenReturn(
+        Mockito.when(productDetailService.findAll()).thenReturn(
                 List.of(
                         ProductDetail.builder()
                                 .listPrice(LIST_PRICE)
@@ -76,15 +78,13 @@ public class ProductPriceServiceImplTest {
                                 .build()
                 )
         );
-        Mockito.when(productDetailRepository.findByProductSku(SKU)).thenReturn(
-                Optional.of(
+        Mockito.when(productDetailService.findByProductSku(SKU)).thenReturn(
                         ProductDetail.builder()
                                 .listPrice(LIST_PRICE)
                                 .productSku(SKU)
                                 .priceCode(PRICE_CODE)
                                 .cost(COST)
                                 .build()
-                )
         );
     }
 
@@ -1086,5 +1086,20 @@ public class ProductPriceServiceImplTest {
         );
         ProductPriceResponseDto productPriceResponseDto = productPriceService.calculate(productPriceRequestDto);
         assertThat(productPriceResponseDto.calculatedPrice()).isEqualTo(expectedPrice);
+    }
+
+    @Test
+    public void whenProductDetailNotFoundThenThrowException() {
+        ProductPriceRequestDto productPriceRequestDto = ProductPriceRequestDto.builder()
+                .customerNumber(CUSTOMER_NUMBER)
+                .productSku(SKU)
+                .priceCode(PRICE_CODE)
+                .priceLevel(PRICE_LEVEL)
+                .quantity(QUANTITY)
+                .build();
+        Mockito.when(productDetailService.findByProductSku(SKU)).thenThrow(ResourceNotFoundException.class);
+        assertThatThrownBy(
+                () -> productPriceService.calculate(productPriceRequestDto)
+        ).isInstanceOf(ResourceNotFoundException.class);
     }
 }

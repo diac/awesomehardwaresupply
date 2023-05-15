@@ -3,18 +3,13 @@ package com.diac.awesomehardwaresupply.priceschedule.service;
 import com.diac.awesomehardwaresupply.domain.dto.ProductPriceRequestDto;
 import com.diac.awesomehardwaresupply.domain.dto.ProductPriceResponseDto;
 import com.diac.awesomehardwaresupply.domain.enumeration.PricingMethod;
-import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.*;
 import com.diac.awesomehardwaresupply.priceschedule.factory.PricingMethodFunctionFactory;
 import com.diac.awesomehardwaresupply.priceschedule.repository.*;
-import com.diac.awesomehardwaresupply.priceschedule.utility.PricingAdjustments;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Сервис, реализующий логику расчета цен товаров
@@ -22,10 +17,6 @@ import java.util.function.Function;
 @Service
 @AllArgsConstructor
 public class ProductPriceServiceImpl implements ProductPriceService {
-
-
-    // TODO: Use service instead?
-    private static final String PRODUCT_DETAIL_NOT_FOUND_MESSAGE = "Product detail #%s not found";
 
     /**
      * Метод ценообразования по умолчанию
@@ -36,6 +27,11 @@ public class ProductPriceServiceImpl implements ProductPriceService {
      * Величина корректировки цены по умолчанию
      */
     private static final int DEFAULT_PRICE_ADJUSTMENT = 0;
+
+    /**
+     * Сервис для работы с объектами модели ProductDetail
+     */
+    private final ProductDetailService productDetailService;
 
     /**
      * Репозиторий для хранения объектов CustomerPricing
@@ -51,11 +47,6 @@ public class ProductPriceServiceImpl implements ProductPriceService {
      * Репозиторий для хранения объектов ProductPricing
      */
     private final ProductPricingRepository productPricingRepository;
-
-    /**
-     * Репозиторий для хранения объектов ProductDetail
-     */
-    private final ProductDetailRepository productDetailRepository;
 
     /**
      * Репозиторий для хранения объектов PriceLevel
@@ -75,12 +66,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
      */
     @Override
     public ProductPriceResponseDto calculate(ProductPriceRequestDto productPriceRequestDto) {
-        ProductDetail productDetail = productDetailRepository.findByProductSku(productPriceRequestDto.getProductSku())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format(PRODUCT_DETAIL_NOT_FOUND_MESSAGE, productPriceRequestDto.getProductSku())
-                        )
-                );
+        ProductDetail productDetail = productDetailService.findByProductSku(productPriceRequestDto.getProductSku());
         Optional<CustomerPricing> customerPricing = customerPricingRepository.findByCustomerNumberAndProductSku(
                 productPriceRequestDto.getCustomerNumber(),
                 productPriceRequestDto.getProductSku()
@@ -106,8 +92,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                         pricing -> pricing.getPricingSteps()
                                 .stream()
                                 .filter(
-                                        pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
-                                                && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
+                                        pricingStep ->
+                                                productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
+                                                        && productPriceRequestDto.getQuantity()
+                                                        <= pricingStep.getMaxQuantity()
                                 )
                                 .findFirst()
                 ).orElseGet(
@@ -115,8 +103,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                                 pricing -> pricing.getPricingSteps()
                                         .stream()
                                         .filter(
-                                                pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
-                                                        && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
+                                                pricingStep -> productPriceRequestDto.getQuantity()
+                                                        >= pricingStep.getMinQuantity()
+                                                        && productPriceRequestDto.getQuantity()
+                                                        <= pricingStep.getMaxQuantity()
                                         )
                                         .findFirst()
                         ).orElse(Optional.empty())
