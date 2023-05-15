@@ -23,7 +23,19 @@ import java.util.function.Function;
 @AllArgsConstructor
 public class ProductPriceServiceImpl implements ProductPriceService {
 
+
+    // TODO: Use service instead?
     private static final String PRODUCT_DETAIL_NOT_FOUND_MESSAGE = "Product detail #%s not found";
+
+    /**
+     * Метод ценообразования по умолчанию
+     */
+    private static final PricingMethod DEFAULT_PRICING_METHOD = PricingMethod.LIST_PRICE;
+
+    /**
+     * Величина корректировки цены по умолчанию
+     */
+    private static final int DEFAULT_PRICE_ADJUSTMENT = 0;
 
     /**
      * Репозиторий для хранения объектов CustomerPricing
@@ -69,84 +81,65 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                                 String.format(PRODUCT_DETAIL_NOT_FOUND_MESSAGE, productPriceRequestDto.getProductSku())
                         )
                 );
-
-        PriceModifier priceModifier = new PriceModifier(0, PricingMethod.LIST_PRICE);
-
         Optional<CustomerPricing> customerPricing = customerPricingRepository.findByCustomerNumberAndProductSku(
                 productPriceRequestDto.getCustomerNumber(),
                 productPriceRequestDto.getProductSku()
         );
-
         Optional<ProductPricing> productPricing = productPricingRepository.findByProductSkuAndPriceLevel(
                 productPriceRequestDto.getProductSku(),
                 priceLevelRepository.findByName(productPriceRequestDto.getPriceLevel()).orElse(new PriceLevel())
         );
-
         Optional<PriceCodePricing> priceCodePricing = priceCodePricingRepository.findByPriceLevelAndPriceCode(
                 priceLevelRepository.findByName(productPriceRequestDto.getPriceLevel()).orElse(new PriceLevel()),
                 priceCodeRepository.findByName(productPriceRequestDto.getPriceCode()).orElse(new PriceCode())
         );
-
-        // TODO: replace "if" statements w/ streams or polymorphism
-        if (customerPricing.isPresent()) {
-            Optional<PricingStep> pricingStepMatch = customerPricing.get()
-                    .getPricingSteps()
-                    .stream()
-                    .filter(
-                            pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
-                                    && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
-                    ).findFirst();
-            // TODO: Clean this up!
-            if (pricingStepMatch.isPresent()) {
-                priceModifier = new PriceModifier(
-                        pricingStepMatch.get().getPriceAdjustment(),
-                        pricingStepMatch.get().getPricingMethod()
-                );
-            }
-        } else if (productPricing.isPresent()) {
-            Optional<PricingStep> pricingStepMatch = productPricing.get()
-                    .getPricingSteps()
-                    .stream()
-                    .filter(
-                            pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
-                                    && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
-                    ).findFirst();
-            if (pricingStepMatch.isPresent()) {
-                priceModifier = new PriceModifier(
-                        pricingStepMatch.get().getPriceAdjustment(),
-                        pricingStepMatch.get().getPricingMethod()
-                );
-            }
-        } else if (priceCodePricing.isPresent()) {
-            Optional<PricingStep> pricingStepMatch = priceCodePricing.get()
-                    .getPricingSteps()
-                    .stream()
-                    .filter(
-                            pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
-                                    && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
-                    ).findFirst();
-            if (pricingStepMatch.isPresent()) {
-                priceModifier = new PriceModifier(
-                        pricingStepMatch.get().getPriceAdjustment(),
-                        pricingStepMatch.get().getPricingMethod()
-                );
-            }
-        }
-
+        PricingStep pricingStepMatch = customerPricing.map(
+                pricing -> pricing.getPricingSteps()
+                        .stream()
+                        .filter(
+                                pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
+                                        && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
+                        )
+                        .findFirst()
+        ).orElseGet(
+                () -> productPricing.map(
+                        pricing -> pricing.getPricingSteps()
+                                .stream()
+                                .filter(
+                                        pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
+                                                && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
+                                )
+                                .findFirst()
+                ).orElseGet(
+                        () -> priceCodePricing.map(
+                                pricing -> pricing.getPricingSteps()
+                                        .stream()
+                                        .filter(
+                                                pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
+                                                        && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
+                                        )
+                                        .findFirst()
+                        ).orElse(Optional.empty())
+                )
+        ).orElse(
+                PricingStep.builder()
+                        .pricingMethod(DEFAULT_PRICING_METHOD)
+                        .priceAdjustment(DEFAULT_PRICE_ADJUSTMENT)
+                        .build()
+        );
         return new ProductPriceResponseDto(
                 productPriceRequestDto.getProductSku(),
-                calculateItemPrice(productDetail, priceModifier)
+                calculateItemPrice(
+                        productDetail,
+                        pricingStepMatch.getPricingMethod(),
+                        pricingStepMatch.getPriceAdjustment()
+                )
         );
     }
 
-    private int calculateItemPrice(ProductDetail productDetail, PriceModifier priceModifier) {
+    private int calculateItemPrice(ProductDetail productDetail, PricingMethod pricingMethod, int priceAdjustment) {
         PricingMethodFunctionFactory pricingMethodFunctionFactory = new PricingMethodFunctionFactory();
-        return pricingMethodFunctionFactory.pricingMethodFunction(priceModifier.pricingMethod)
-                .apply(productDetail, priceModifier.priceAdjustment);
-    }
-
-    // TODO: Get rid of redundant record class
-    private record PriceModifier(int priceAdjustment, PricingMethod pricingMethod) {
-
+        return pricingMethodFunctionFactory.pricingMethodFunction(pricingMethod)
+                .apply(productDetail, priceAdjustment);
     }
 }
