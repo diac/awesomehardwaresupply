@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
-public class ProductPricing {
+public class ProductPricing implements Pricing {
 
     /**
      * Идентификатор правила
