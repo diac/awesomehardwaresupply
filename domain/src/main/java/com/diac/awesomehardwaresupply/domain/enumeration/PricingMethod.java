@@ -28,5 +28,10 @@ public enum PricingMethod {
     /**
      * Переопределение цены
      */
-    PRICE_OVERRIDE
+    PRICE_OVERRIDE,
+
+    /**
+     * Списочная цена
+     */
+    LIST_PRICE
 }

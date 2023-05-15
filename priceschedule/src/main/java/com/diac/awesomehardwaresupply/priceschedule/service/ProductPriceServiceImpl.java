@@ -5,12 +5,16 @@ import com.diac.awesomehardwaresupply.domain.dto.ProductPriceResponseDto;
 import com.diac.awesomehardwaresupply.domain.enumeration.PricingMethod;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.*;
+import com.diac.awesomehardwaresupply.priceschedule.factory.PricingMethodFunctionFactory;
 import com.diac.awesomehardwaresupply.priceschedule.repository.*;
 import com.diac.awesomehardwaresupply.priceschedule.utility.PricingAdjustments;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Сервис, реализующий логику расчета цен товаров
@@ -66,7 +70,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                         )
                 );
 
-        Optional<PriceModifier> priceModifier = Optional.empty();
+        PriceModifier priceModifier = new PriceModifier(0, PricingMethod.LIST_PRICE);
 
         Optional<CustomerPricing> customerPricing = customerPricingRepository.findByCustomerNumberAndProductSku(
                 productPriceRequestDto.getCustomerNumber(),
@@ -83,6 +87,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                 priceCodeRepository.findByName(productPriceRequestDto.getPriceCode()).orElse(new PriceCode())
         );
 
+        // TODO: replace "if" statements w/ streams or polymorphism
         if (customerPricing.isPresent()) {
             Optional<PricingStep> pricingStepMatch = customerPricing.get()
                     .getPricingSteps()
@@ -91,9 +96,13 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                             pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
                                     && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
                     ).findFirst();
-            priceModifier = pricingStepMatch.map(
-                    pricingStep -> new PriceModifier(pricingStep.getPriceAdjustment(), pricingStep.getPricingMethod())
-            );
+            // TODO: Clean this up!
+            if (pricingStepMatch.isPresent()) {
+                priceModifier = new PriceModifier(
+                        pricingStepMatch.get().getPriceAdjustment(),
+                        pricingStepMatch.get().getPricingMethod()
+                );
+            }
         } else if (productPricing.isPresent()) {
             Optional<PricingStep> pricingStepMatch = productPricing.get()
                     .getPricingSteps()
@@ -102,9 +111,12 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                             pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
                                     && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
                     ).findFirst();
-            priceModifier = pricingStepMatch.map(
-                    pricingStep -> new PriceModifier(pricingStep.getPriceAdjustment(), pricingStep.getPricingMethod())
-            );
+            if (pricingStepMatch.isPresent()) {
+                priceModifier = new PriceModifier(
+                        pricingStepMatch.get().getPriceAdjustment(),
+                        pricingStepMatch.get().getPricingMethod()
+                );
+            }
         } else if (priceCodePricing.isPresent()) {
             Optional<PricingStep> pricingStepMatch = priceCodePricing.get()
                     .getPricingSteps()
@@ -113,9 +125,12 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                             pricingStep -> productPriceRequestDto.getQuantity() >= pricingStep.getMinQuantity()
                                     && productPriceRequestDto.getQuantity() <= pricingStep.getMaxQuantity()
                     ).findFirst();
-            priceModifier = pricingStepMatch.map(
-                    pricingStep -> new PriceModifier(pricingStep.getPriceAdjustment(), pricingStep.getPricingMethod())
-            );
+            if (pricingStepMatch.isPresent()) {
+                priceModifier = new PriceModifier(
+                        pricingStepMatch.get().getPriceAdjustment(),
+                        pricingStepMatch.get().getPricingMethod()
+                );
+            }
         }
 
         return new ProductPriceResponseDto(
@@ -124,31 +139,13 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         );
     }
 
-    private int calculateItemPrice(ProductDetail productDetail, Optional<PriceModifier> priceModifier) {
-        return priceModifier.map(
-                modifier ->
-                        switch (modifier.pricingMethod) {
-                            case PRICE_OVERRIDE -> modifier.priceAdjustment;
-                            case COST_MARKUP_AMOUNT -> PricingAdjustments.costMarkupAmount(
-                                    productDetail.getCost(),
-                                    modifier.priceAdjustment
-                            );
-                            case COST_MARKUP_PERCENTAGE -> PricingAdjustments.costMarkupPercentage(
-                                    productDetail.getCost(),
-                                    modifier.priceAdjustment
-                            );
-                            case PRICE_DISCOUNT_AMOUNT -> PricingAdjustments.priceDiscountAmount(
-                                    productDetail.getCost(),
-                                    modifier.priceAdjustment
-                            );
-                            case PRICE_DISCOUNT_PERCENTAGE -> PricingAdjustments.priceDiscountPercentage(
-                                    productDetail.getCost(),
-                                    modifier.priceAdjustment
-                            );
-                        }
-        ).orElse(productDetail.getListPrice());
+    private int calculateItemPrice(ProductDetail productDetail, PriceModifier priceModifier) {
+        PricingMethodFunctionFactory pricingMethodFunctionFactory = new PricingMethodFunctionFactory();
+        return pricingMethodFunctionFactory.pricingMethodFunction(priceModifier.pricingMethod)
+                .apply(productDetail, priceModifier.priceAdjustment);
     }
 
+    // TODO: Get rid of redundant record class
     private record PriceModifier(int priceAdjustment, PricingMethod pricingMethod) {
 
     }
