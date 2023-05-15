@@ -99,17 +99,16 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                                 )
                                 .findFirst()
                 ).orElseGet(
-                        () -> priceCodePricing.map(
-                                pricing -> pricing.getPricingSteps()
-                                        .stream()
-                                        .filter(
-                                                pricingStep -> productPriceRequestDto.getQuantity()
-                                                        >= pricingStep.getMinQuantity()
-                                                        && productPriceRequestDto.getQuantity()
-                                                        <= pricingStep.getMaxQuantity()
-                                        )
-                                        .findFirst()
-                        ).orElse(Optional.empty())
+                        () -> priceCodePricing.flatMap(pricing -> pricing.getPricingSteps()
+                                .stream()
+                                .filter(
+                                        pricingStep -> productPriceRequestDto.getQuantity()
+                                                >= pricingStep.getMinQuantity()
+                                                && productPriceRequestDto.getQuantity()
+                                                <= pricingStep.getMaxQuantity()
+                                )
+                                .findFirst()
+                        )
                 )
         ).orElse(
                 PricingStep.builder()
