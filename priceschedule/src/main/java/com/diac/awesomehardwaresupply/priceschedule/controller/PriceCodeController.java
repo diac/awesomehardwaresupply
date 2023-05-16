@@ -60,10 +60,10 @@ public class PriceCodeController {
     }
 
     /**
-     * Получить код товара по ID
+     * Получить код цены по ID
      *
-     * @param id Идентификатор кода товара
-     * @return Ответ с кодом товара и статусом Found
+     * @param id Идентификатор кода цены
+     * @return Ответ с кодом цены и статусом Found
      */
     @GetMapping("/{id}")
     public ResponseEntity<PriceCode> getById(@PathVariable("id") int id) {
