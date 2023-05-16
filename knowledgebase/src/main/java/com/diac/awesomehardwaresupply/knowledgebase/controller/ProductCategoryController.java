@@ -21,7 +21,7 @@ public class ProductCategoryController {
     /**
      * Количество категорий на одной странице
      */
-    private static final int CATEGORIES_PE_PAGE = 10;
+    private static final int CATEGORIES_PER_PAGE = 10;
 
     /**
      * Сервис для работы с объектами модели ProductCategory
@@ -39,7 +39,7 @@ public class ProductCategoryController {
             @RequestParam(name = "page", required = false, defaultValue = "1") int pageNumber
     ) {
         return new ResponseEntity<>(
-                productCategoryService.getPage(PageRequest.of(pageNumber - 1, CATEGORIES_PE_PAGE)),
+                productCategoryService.getPage(PageRequest.of(pageNumber - 1, CATEGORIES_PER_PAGE)),
                 HttpStatus.OK
         );
     }
