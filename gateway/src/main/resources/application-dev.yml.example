@@ -23,3 +23,10 @@ spring:
           filters:
             - AuthFilter
             - RewritePath=/knowledgebase/(?<segment>.*), /$\{segment}
+        - id: price_schedule
+          uri: price_schedule_service_uri
+          predicates:
+            - Path=/price_schedule/**
+          filters:
+            - AuthFilter
+            - RewritePath=/price_schedule/(?<segment>.*), /$\{segment}
