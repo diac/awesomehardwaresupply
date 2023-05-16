@@ -26,3 +26,12 @@ services:
     container_name: awesomehardwaresupply_app_knowledgebase
     environment:
       - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
+  ### Price Schedule ###
+  app_price_schedule:
+    image: ndiac/awesomehardwaresupply_app_price_schedule
+    build:
+      context: .
+      dockerfile: priceschedule/Dockerfile
+    container_name: awesomehardwaresupply_app_price_schedule
+    environment:
+      - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
