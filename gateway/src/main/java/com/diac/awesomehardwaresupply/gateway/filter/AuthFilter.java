@@ -31,7 +31,9 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
     private static final List<AclRecord> ACL = List.of(
             new AclRecord("/knowledgebase", HTTP_READ_METHODS, Authority.KNOWLEDGEBASE_READ),
-            new AclRecord("/knowledgebase", HTTP_WRITE_METHODS, Authority.KNOWLEDGEBASE_WRITE)
+            new AclRecord("/knowledgebase", HTTP_WRITE_METHODS, Authority.KNOWLEDGEBASE_WRITE),
+            new AclRecord("/price_schedule", HTTP_READ_METHODS, Authority.PRICE_SCHEDULE_READ),
+            new AclRecord("/price_schedule", HTTP_WRITE_METHODS, Authority.PRICE_SCHEDULE_WRITE)
     );
 
     private final RouteValidator routeValidator;

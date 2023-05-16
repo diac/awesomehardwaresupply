@@ -13,5 +13,15 @@ public enum Authority {
     /**
      * Разрешает операции записи для базы знаний
      */
-    KNOWLEDGEBASE_WRITE
+    KNOWLEDGEBASE_WRITE,
+
+    /**
+     * Разрешает операции чтения для прейскуранта
+     */
+    PRICE_SCHEDULE_READ,
+
+    /**
+     * Разрешает операции записи для прейскуранта
+     */
+    PRICE_SCHEDULE_WRITE
 }
