@@ -1,11 +1,2 @@
-docker run -itd -e POSTGRES_USER=db_user -e POSTGRES_PASSWORD=db_password -p 5432:5432 -v ~/postgres_data:/var/lib/postgresql/data --name postgresql postgres
-
-docker exec -it postgresql bash
-
-psql -U db_user
-
-CREATE DATABASE ahs_authentication;
-
-CREATE DATABASE ahs_knowledgebase;
-
-\q
+docker build -t postgresql ./
+docker run -itd -p 5432:5432 -v ~/postgres_data:/var/lib/postgresql/data --name postgresql postgresql
