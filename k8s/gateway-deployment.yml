@@ -30,6 +30,11 @@ spec:
                 configMapKeyRef:
                   name: gateway-configmap
                   key: knowledgebase_service_uri
+            - name: PRICE_SCHEDULE_SERVICE_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway-configmap
+                  key: price_schedule_service_uri
             - name: SECURITY_JWT_SECRET
               valueFrom:
                 secretKeyRef:
