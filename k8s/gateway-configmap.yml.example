@@ -5,3 +5,4 @@ metadata:
 data:
   authentication_service_uri: authentication_service_uri
   knowledgebase_service_uri: knowledgebase_service_uri
+  price_schedule_service_uri: price_schedule_service_uri
