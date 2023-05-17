@@ -54,3 +54,4 @@ build/
 /k8s/knowledgebase-db-configmap.yml
 /k8s/gateway-configmap.yml
 /k8s/price-schedule-db-secret.yml
+/k8s/price-schedule-db-configmap.yml

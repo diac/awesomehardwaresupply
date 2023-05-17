@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: price-schedule-db-configmap
+data:
+  database_url: jdbc:postgresql://database_host/ahs_price_schedule
+  postgres_db: ahs_price_schedule
