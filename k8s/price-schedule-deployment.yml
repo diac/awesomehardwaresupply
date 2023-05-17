@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: price-schedule-deployment
+  labels:
+    app: price-schedule
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: price-schedule
+  template:
+    metadata:
+      labels:
+        app: price-schedule
+    spec:
+      containers:
+        - name: price-schedule
+          image: ndiac/awesomehardwaresupply_app_price_schedule
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: price-schedule-db-configmap
+                  key: database_url
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: price-schedule-db-secret
+                  key: postgres-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: price-schedule-db-secret
+                  key: postgres-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: price-schedule-service
+spec:
+  selector:
+    app: price-schedule
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
