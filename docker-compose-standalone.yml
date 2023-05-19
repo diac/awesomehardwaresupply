@@ -1,0 +1,74 @@
+### Before building the project, make sure you have specified the required environment variables in the .env file
+version: "3.9"
+services:
+  ### Databases ###
+  db_ahs:
+    build:
+      context: .
+      dockerfile: db/Dockerfile
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: always
+  ### Gateway ###
+  app_gateway:
+    image: awesomehardwaresupply_app_gateway
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    container_name: awesomehardwaresupply_app_gateway
+    ports:
+      - "8080:8080"
+  ### Authentication ###
+  app_authentication:
+    image: awesomehardwaresupply_app_authentication
+    build:
+      context: .
+      dockerfile: authentication/Dockerfile
+    container_name: awesomehardwaresupply_app_authentication
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_ahs:5432/ahs_authentication
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
+      - security.b-crypt-encoder-strength=${B_CRYPT_ENCODER_STRENGTH}
+      - jwt.secret=${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8081:8080"
+  ### Knowledgebase ###
+  app_knowledgebase:
+    image: awesomehardwaresupply_app_knowledgebase
+    build:
+      context: .
+      dockerfile: knowledgebase/Dockerfile
+    container_name: awesomehardwaresupply_app_knowledgebase
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_ahs:5432/ahs_knowledgebase
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
+      - security.b-crypt-encoder-strength=${B_CRYPT_ENCODER_STRENGTH}
+      - jwt.secret=${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8082:8080"
+  ### Price Schedule ###
+  app_price_schedule:
+    image: awesomehardwaresupply_app_price_schedule
+    build:
+      context: .
+      dockerfile: priceschedule/Dockerfile
+    container_name: awesomehardwaresupply_app_price_schedule
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_ahs:5432/ahs_price_schedule
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
+      - security.b-crypt-encoder-strength=${B_CRYPT_ENCODER_STRENGTH}
+      - jwt.secret=${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8083:8080"
