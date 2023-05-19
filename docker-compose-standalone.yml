@@ -19,6 +19,8 @@ services:
       context: .
       dockerfile: gateway/Dockerfile
     container_name: awesomehardwaresupply_app_gateway
+    environment:
+      - security.jwt.secret=${JWT_SECRET}
     ports:
       - "8080:8080"
   ### Authentication ###
@@ -34,7 +36,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/liquibase-changelog.xml
       - security.b-crypt-encoder-strength=${B_CRYPT_ENCODER_STRENGTH}
-      - jwt.secret=${JWT_SECRET}
+      - security.jwt.secret=${JWT_SECRET}
       - SPRING_PROFILES_ACTIVE=prod
     ports:
       - "8081:8080"
