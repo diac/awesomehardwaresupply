@@ -64,6 +64,7 @@ public class PriceCodePricingRepositoryTest implements PostgreSQLContainerInitia
                         )
                         .build()
         );
+        assertThat(priceCodePricingRepository.findAll()).contains(priceCodePricing);
     }
 
     @Test
