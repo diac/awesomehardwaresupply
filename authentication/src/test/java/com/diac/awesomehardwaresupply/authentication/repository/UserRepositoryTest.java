@@ -5,6 +5,7 @@ import com.diac.awesomehardwaresupply.authentication.model.User;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
@@ -12,11 +13,12 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = {
         DataConfig.class,
         UserRepository.class
 })
-public class UserRepositoryTest {
+public class UserRepositoryTest implements PostgreSQLContainerInitializer {
 
     @Autowired
     private UserRepository userRepository;
