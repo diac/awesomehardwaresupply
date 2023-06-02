@@ -13,7 +13,7 @@ public interface PostgreSQLContainerInitializer {
 
     String DB_DOCKER_IMAGE = "postgres:14.8";
 
-    String TEST_DB_NAME = "knowledgebase-integration-tests-db";
+    String TEST_DB_NAME = "price-schedule-integration-tests-db";
 
     String TEST_DB_USERNAME = "sa";
 
