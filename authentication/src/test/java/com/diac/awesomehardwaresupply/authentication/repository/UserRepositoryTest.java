@@ -1,24 +1,15 @@
 package com.diac.awesomehardwaresupply.authentication.repository;
 
-import com.diac.awesomehardwaresupply.authentication.config.DataConfig;
 import com.diac.awesomehardwaresupply.authentication.model.User;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ContextConfiguration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = {
-        DataConfig.class,
-        UserRepository.class
-})
-public class UserRepositoryTest implements PostgreSQLContainerInitializer {
+public class UserRepositoryTest extends AbstractPostgreSQLContainerInitializer {
 
     @Autowired
     private UserRepository userRepository;
