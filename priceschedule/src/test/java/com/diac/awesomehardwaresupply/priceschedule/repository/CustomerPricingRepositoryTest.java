@@ -3,24 +3,15 @@ package com.diac.awesomehardwaresupply.priceschedule.repository;
 import com.diac.awesomehardwaresupply.domain.enumeration.PricingMethod;
 import com.diac.awesomehardwaresupply.domain.model.CustomerPricing;
 import com.diac.awesomehardwaresupply.domain.model.PricingStep;
-import com.diac.awesomehardwaresupply.priceschedule.config.DataConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = {
-        DataConfig.class
-})
-public class CustomerPricingRepositoryTest implements PostgreSQLContainerInitializer {
+public class CustomerPricingRepositoryTest extends AbstractPostgreSQLContainerInitializer {
 
     @Autowired
     private CustomerPricingRepository customerPricingRepository;
