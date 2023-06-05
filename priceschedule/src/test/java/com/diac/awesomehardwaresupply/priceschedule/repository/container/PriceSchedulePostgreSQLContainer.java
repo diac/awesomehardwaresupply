@@ -1,4 +1,4 @@
-package com.diac.awesomehardwaresupply.priceschedule.repository;
+package com.diac.awesomehardwaresupply.priceschedule.repository.container;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 

@@ -1,6 +1,7 @@
 package com.diac.awesomehardwaresupply.priceschedule.repository;
 
 import com.diac.awesomehardwaresupply.priceschedule.config.DataConfig;
+import com.diac.awesomehardwaresupply.priceschedule.repository.container.PriceSchedulePostgreSQLContainer;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
