@@ -1,22 +1,12 @@
 package com.diac.awesomehardwaresupply.knowledgebase.repository;
 
 import com.diac.awesomehardwaresupply.domain.model.ProductCategory;
-import com.diac.awesomehardwaresupply.knowledgebase.config.DataConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ContextConfiguration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = {
-        DataConfig.class,
-        ProductCategory.class
-})
-public class ProductCategoryRepositoryTest implements PostgreSQLContainerInitializer {
+public class ProductCategoryRepositoryTest extends AbstractPostgreSQLContainerInitializer {
 
     @Autowired
     private ProductCategoryRepository productCategoryRepository;
