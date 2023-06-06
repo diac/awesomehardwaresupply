@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PriceCodeRepositoryTest extends AbstractPostgreSQLContainerInitializer {
+public class PriceCodeRepositoryTest extends AbstractRepositoryIntegrationTest {
 
     @Autowired
     private PriceCodeRepository priceCodeRepository;

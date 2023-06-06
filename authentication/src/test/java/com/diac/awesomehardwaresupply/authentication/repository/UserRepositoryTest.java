@@ -9,7 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class UserRepositoryTest extends AbstractPostgreSQLContainerInitializer {
+public class UserRepositoryTest extends AbstractRepositoryIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;

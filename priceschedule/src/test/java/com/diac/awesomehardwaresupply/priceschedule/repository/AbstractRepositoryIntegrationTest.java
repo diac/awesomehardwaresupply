@@ -1,7 +1,7 @@
-package com.diac.awesomehardwaresupply.knowledgebase.repository;
+package com.diac.awesomehardwaresupply.priceschedule.repository;
 
-import com.diac.awesomehardwaresupply.knowledgebase.config.DataConfig;
-import com.diac.awesomehardwaresupply.knowledgebase.repository.container.PostgreSQLTestContainersExtension;
+import com.diac.awesomehardwaresupply.priceschedule.config.DataConfig;
+import com.diac.awesomehardwaresupply.priceschedule.repository.container.PostgreSQLTestContainersExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,6 +15,6 @@ import org.springframework.test.context.ContextConfiguration;
 })
 @ExtendWith(PostgreSQLTestContainersExtension.class)
 @DirtiesContext
-public abstract class AbstractPostgreSQLContainerInitializer {
+public abstract class AbstractRepositoryIntegrationTest {
 
 }

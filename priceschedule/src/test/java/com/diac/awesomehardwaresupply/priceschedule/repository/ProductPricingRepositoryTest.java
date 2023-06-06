@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = {
         DataConfig.class
 })
-public class ProductPricingRepositoryTest extends AbstractPostgreSQLContainerInitializer {
+public class ProductPricingRepositoryTest extends AbstractRepositoryIntegrationTest {
 
     @Autowired
     private ProductPricingRepository productPricingRepository;

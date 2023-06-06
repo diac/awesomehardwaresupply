@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PriceCodePricingRepositoryTest extends AbstractPostgreSQLContainerInitializer {
+public class PriceCodePricingRepositoryTest extends AbstractRepositoryIntegrationTest {
 
     @Autowired
     private PriceCodePricingRepository priceCodePricingRepository;
