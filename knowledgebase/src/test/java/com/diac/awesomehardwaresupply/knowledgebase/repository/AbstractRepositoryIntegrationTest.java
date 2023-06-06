@@ -1,6 +1,6 @@
-package com.diac.awesomehardwaresupply.priceschedule.repository;
+package com.diac.awesomehardwaresupply.knowledgebase.repository;
 
-import com.diac.awesomehardwaresupply.priceschedule.config.DataConfig;
+import com.diac.awesomehardwaresupply.knowledgebase.config.DataConfig;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 
