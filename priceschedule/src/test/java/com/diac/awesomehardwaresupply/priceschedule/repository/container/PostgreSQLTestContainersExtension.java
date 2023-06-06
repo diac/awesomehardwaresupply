@@ -1,9 +1,9 @@
 package com.diac.awesomehardwaresupply.priceschedule.repository.container;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public class PostgreSQLTestContainersExtension implements BeforeAllCallback, AfterAllCallback {
@@ -14,12 +14,11 @@ public class PostgreSQLTestContainersExtension implements BeforeAllCallback, Aft
 
     private static final String SPRING_DATASOURCE_PASSWORD_PROPERTY = "spring.datasource.password";
 
-    @Value("${enable-test-containers}")
-    private boolean enableTestContainers = true;
+    private static final String ENV_DISABLE_TEST_CONTAINERS = "DISABLE_TEST_CONTAINERS";
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
-        if (!enableTestContainers) {
+        if (!StringUtils.isBlank(System.getenv(ENV_DISABLE_TEST_CONTAINERS))) {
             return;
         }
         PostgreSQLContainer<?> dbContainer = PriceSchedulePostgreSQLContainer.getInstance();
