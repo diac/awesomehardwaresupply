@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.priceschedule.handler;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,6 +44,34 @@ public class GlobalExceptionHandler {
     public void handleResourceNotFoundException(Exception e, HttpServletResponse response) throws IOException {
         log.warn(e.getMessage(), e);
         response.setStatus(HttpStatus.NOT_FOUND.value());
+        response.setContentType("application/json");
+        response.getWriter().write(objectMapper.writeValueAsString(
+                new HashMap<>() {
+                    {
+                        put("message", e.getMessage());
+                        put("type", e.getClass());
+                    }
+                }
+        ));
+    }
+
+    /**
+     * Метод-обработчик исключений ResourceConstraintViolationException
+     *
+     * @param e Объект-исключение
+     * @throws IOException В случае, если возникает ошибка записи в response
+     */
+    @ExceptionHandler(
+            value = {
+                    ResourceConstraintViolationException.class
+            }
+    )
+    public void handleResourceConstraintViolationException(
+            Exception e,
+            HttpServletResponse response
+    ) throws IOException {
+        log.warn(e.getMessage(), e);
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(
                 new HashMap<>() {
