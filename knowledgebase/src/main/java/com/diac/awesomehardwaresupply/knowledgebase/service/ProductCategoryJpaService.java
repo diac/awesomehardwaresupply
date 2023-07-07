@@ -1,9 +1,12 @@
 package com.diac.awesomehardwaresupply.knowledgebase.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.ProductCategory;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductCategoryRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -67,10 +70,15 @@ public class ProductCategoryJpaService implements ProductCategoryService {
      *
      * @param productCategory Новая категория товаров
      * @return Сохраненная категория товаров
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public ProductCategory add(ProductCategory productCategory) {
-        return productCategoryRepository.save(productCategory);
+        try {
+            return productCategoryRepository.save(productCategory);
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
@@ -79,22 +87,29 @@ public class ProductCategoryJpaService implements ProductCategoryService {
      * @param id              Идентификатор категории товаров, данные которой необходимо обновить
      * @param productCategory Объект с обновленными данными категории товаров
      * @return Обновленная категория товаров
+     * @throws ResourceNotFoundException при попытке обновить несуществующую категорию товаров
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public ProductCategory update(int id, ProductCategory productCategory) {
-        return productCategoryRepository.findById(id)
-                .map(productCategoryInDb -> {
-                    productCategory.setId(id);
-                    return productCategoryRepository.save(productCategory);
-                }).orElseThrow(
-                        () -> new ResourceNotFoundException(String.format(PRODUCT_CATEGORY_DOES_NOT_EXIST_MESSAGE, id))
-                );
+        try {
+            return productCategoryRepository.findById(id)
+                    .map(productCategoryInDb -> {
+                        productCategory.setId(id);
+                        return productCategoryRepository.save(productCategory);
+                    }).orElseThrow(
+                            () -> new ResourceNotFoundException(String.format(PRODUCT_CATEGORY_DOES_NOT_EXIST_MESSAGE, id))
+                    );
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
      * Удалить категорию товаров из системы
      *
      * @param id Идентификатор категории товаров, которую необходимо удалить
+     * @throws ResourceNotFoundException при попытке удалить несуществующую категорию товаров
      */
     @Override
     public void delete(int id) {
