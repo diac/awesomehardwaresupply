@@ -53,7 +53,7 @@ public class ProductController {
     public ResponseEntity<Product> getById(@PathVariable("id") int id) {
         return new ResponseEntity<>(
                 productService.findById(id),
-                HttpStatus.FOUND
+                HttpStatus.OK
         );
     }
 
@@ -67,7 +67,7 @@ public class ProductController {
     public ResponseEntity<Product> getBySku(@PathVariable("sku") String sku) {
         return new ResponseEntity<>(
                 productService.findBySku(sku),
-                HttpStatus.FOUND
+                HttpStatus.OK
         );
     }
 

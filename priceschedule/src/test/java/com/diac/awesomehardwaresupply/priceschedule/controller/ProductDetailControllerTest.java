@@ -54,7 +54,7 @@ public class ProductDetailControllerTest {
         String requestUrl = String.format("/product_detail/%d", id);
         mockMvc.perform(
                 get(requestUrl)
-        ).andExpect(status().isFound());
+        ).andExpect(status().isOk());
     }
 
     @Test

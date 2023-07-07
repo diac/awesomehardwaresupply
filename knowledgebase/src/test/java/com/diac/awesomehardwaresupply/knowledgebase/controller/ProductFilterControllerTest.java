@@ -54,7 +54,7 @@ public class ProductFilterControllerTest {
         String requestUrl = String.format("/product_filter/%d", id);
         mockMvc.perform(
                 get(requestUrl)
-        ).andExpect(status().isFound());
+        ).andExpect(status().isOk());
     }
 
     @Test

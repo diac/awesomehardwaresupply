@@ -54,7 +54,7 @@ public class ProductPricingController {
     public ResponseEntity<ProductPricing> getById(@PathVariable("id") int id) {
         return new ResponseEntity<>(
                 productPricingService.findById(id),
-                HttpStatus.FOUND
+                HttpStatus.OK
         );
     }
 

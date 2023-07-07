@@ -69,7 +69,7 @@ public class PriceCodeController {
     public ResponseEntity<PriceCode> getById(@PathVariable("id") int id) {
         return new ResponseEntity<>(
                 priceCodeService.findById(id),
-                HttpStatus.FOUND
+                HttpStatus.OK
         );
     }
 

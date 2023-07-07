@@ -54,7 +54,7 @@ public class CustomerPricingControllerTest {
         String requestUrl = String.format("/customer_pricing/%d", id);
         mockMvc.perform(
                 get(requestUrl)
-        ).andExpect(status().isFound());
+        ).andExpect(status().isOk());
     }
 
     @Test

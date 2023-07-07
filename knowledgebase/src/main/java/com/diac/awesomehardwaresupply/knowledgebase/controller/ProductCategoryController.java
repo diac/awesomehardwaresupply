@@ -54,7 +54,7 @@ public class ProductCategoryController {
     public ResponseEntity<ProductCategory> getById(@PathVariable("id") int id) {
         return new ResponseEntity<>(
                 productCategoryService.findById(id),
-                HttpStatus.FOUND
+                HttpStatus.OK
         );
     }
 

@@ -55,7 +55,7 @@ public class ProductControllerTest {
         String requestUrl = String.format("/product/%d", id);
         mockMvc.perform(
                 get(requestUrl)
-        ).andExpect(status().isFound());
+        ).andExpect(status().isOk());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ProductControllerTest {
                 );
         String requestUrl = String.format("/product/find_by_sku/%s", sku);
         mockMvc.perform(get(requestUrl))
-                .andExpect(status().isFound());
+                .andExpect(status().isOk());
     }
 
     @Test

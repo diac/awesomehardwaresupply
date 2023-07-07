@@ -69,7 +69,7 @@ public class PriceLevelController {
     public ResponseEntity<PriceLevel> getById(@PathVariable("id") int id) {
         return new ResponseEntity<>(
                 priceLevelService.findById(id),
-                HttpStatus.FOUND
+                HttpStatus.OK
         );
     }
 
