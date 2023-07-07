@@ -1,14 +1,17 @@
 package com.diac.awesomehardwaresupply.knowledgebase.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.ProductSpecification;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductSpecificationRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -85,6 +88,52 @@ public class ProductSpecificationJpaServiceTest {
     }
 
     @Test
+    public void whenAdd() {
+        int id = 1;
+        String value = "test";
+        ProductSpecification newProductSpecification = ProductSpecification.builder()
+                .name(value)
+                .description(value)
+                .build();
+        ProductSpecification savedProductSpecification = ProductSpecification.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productSpecificationRepository.save(newProductSpecification)).thenReturn(savedProductSpecification);
+        assertThat(productSpecificationService.add(newProductSpecification)).isEqualTo(savedProductSpecification);
+        Mockito.verify(productSpecificationRepository).save(newProductSpecification);
+    }
+
+    @Test
+    public void whenAddViolatesDataIntegrityThenThrowException() {
+        String value = "test";
+        ProductSpecification productSpecification = ProductSpecification.builder()
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productSpecificationRepository.save(productSpecification))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> productSpecificationService.add(productSpecification)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenAddViolatesConstraintsThenThrowException() {
+        String value = "test";
+        ProductSpecification productSpecification = ProductSpecification.builder()
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productSpecificationRepository.save(productSpecification))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> productSpecificationService.add(productSpecification)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
     public void whenUpdate() {
         int id = 1;
         String value = "test";
@@ -109,6 +158,40 @@ public class ProductSpecificationJpaServiceTest {
         assertThatThrownBy(
                 () -> productSpecificationService.update(id, productSpecification)
         ).isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesDataIntegrityThenThrowException() {
+        int id = 1;
+        String value = "test";
+        ProductSpecification productSpecification = ProductSpecification.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productSpecificationRepository.findById(id)).thenReturn(Optional.of(productSpecification));
+        Mockito.when(productSpecificationRepository.save(productSpecification))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> productSpecificationService.update(id, productSpecification)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesConstraintsThenThrowException() {
+        int id = 1;
+        String value = "test";
+        ProductSpecification productSpecification = ProductSpecification.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productSpecificationRepository.findById(id)).thenReturn(Optional.of(productSpecification));
+        Mockito.when(productSpecificationRepository.save(productSpecification))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> productSpecificationService.update(id, productSpecification)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
     }
 
     @Test
