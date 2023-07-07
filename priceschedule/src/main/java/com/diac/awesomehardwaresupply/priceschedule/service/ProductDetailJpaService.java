@@ -1,9 +1,12 @@
 package com.diac.awesomehardwaresupply.priceschedule.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.ProductDetail;
 import com.diac.awesomehardwaresupply.priceschedule.repository.ProductDetailRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -67,6 +70,7 @@ public class ProductDetailJpaService implements ProductDetailService {
      *
      * @param productSku Артикул товара
      * @return Подробности товара
+     * @throws ResourceNotFoundException если ничего не найдено
      */
     @Override
     public ProductDetail findByProductSku(String productSku) {
@@ -81,10 +85,15 @@ public class ProductDetailJpaService implements ProductDetailService {
      *
      * @param productDetail Подробности товара
      * @return Сохраненные подробности товара
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public ProductDetail add(ProductDetail productDetail) {
-        return productDetailRepository.save(productDetail);
+        try {
+            return productDetailRepository.save(productDetail);
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
@@ -93,22 +102,29 @@ public class ProductDetailJpaService implements ProductDetailService {
      * @param id            Идентификатор подробностей товара
      * @param productDetail Объект с обновленными данными подробностей товара
      * @return Обновленные подробности товара
+     * @throws ResourceNotFoundException            при попытке обновить несуществующие подробности товара
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public ProductDetail update(int id, ProductDetail productDetail) {
-        return productDetailRepository.findById(id)
-                .map(productDetailInDb -> {
-                    productDetail.setId(id);
-                    return productDetailRepository.save(productDetail);
-                }).orElseThrow(
-                        () -> new ResourceNotFoundException(String.format(PRODUCT_DETAIL_NOT_FOUND_MESSAGE, id))
-                );
+        try {
+            return productDetailRepository.findById(id)
+                    .map(productDetailInDb -> {
+                        productDetail.setId(id);
+                        return productDetailRepository.save(productDetail);
+                    }).orElseThrow(
+                            () -> new ResourceNotFoundException(String.format(PRODUCT_DETAIL_NOT_FOUND_MESSAGE, id))
+                    );
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
      * Удалить подробности товара из системы
      *
      * @param id Идентификатор подробностей, которые необходимо удалить
+     * @throws ResourceNotFoundException при попытке удалить несуществующие подробности товара
      */
     @Override
     public void delete(int id) {
