@@ -1,9 +1,12 @@
 package com.diac.awesomehardwaresupply.priceschedule.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.PriceCodePricing;
 import com.diac.awesomehardwaresupply.priceschedule.repository.PriceCodePricingRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -53,6 +56,7 @@ public class PriceCodePricingJpaService implements PriceCodePricingService {
      *
      * @param id Идентификатор правила
      * @return Правило
+     * @throws ResourceNotFoundException Если ничего не найдено
      */
     @Override
     public PriceCodePricing findById(int id) {
@@ -69,10 +73,15 @@ public class PriceCodePricingJpaService implements PriceCodePricingService {
      *
      * @param priceCodePricing Новое правило
      * @return Сохраненное правило
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public PriceCodePricing add(PriceCodePricing priceCodePricing) {
-        return priceCodePricingRepository.save(priceCodePricing);
+        try {
+            return priceCodePricingRepository.save(priceCodePricing);
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
@@ -81,24 +90,31 @@ public class PriceCodePricingJpaService implements PriceCodePricingService {
      * @param id               Идентификатор правила, данные которого необходимо обновить
      * @param priceCodePricing Объект с обновленными данными правила
      * @return Обновленное правило
+     * @throws ResourceNotFoundException            При попытке обновить несуществующее правило
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public PriceCodePricing update(int id, PriceCodePricing priceCodePricing) {
-        return priceCodePricingRepository.findById(id)
-                .map(priceCodePricingInDb -> {
-                    priceCodePricing.setId(id);
-                    return priceCodePricingRepository.save(priceCodePricing);
-                }).orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format(PRICE_CODE_PRICING_DOES_NOT_EXIST_MESSAGE, id)
-                        )
-                );
+        try {
+            return priceCodePricingRepository.findById(id)
+                    .map(priceCodePricingInDb -> {
+                        priceCodePricing.setId(id);
+                        return priceCodePricingRepository.save(priceCodePricing);
+                    }).orElseThrow(
+                            () -> new ResourceNotFoundException(
+                                    String.format(PRICE_CODE_PRICING_DOES_NOT_EXIST_MESSAGE, id)
+                            )
+                    );
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
      * Удалить правило из системы
      *
      * @param id Идентификатор правила, которое необходимо удалить
+     * @throws ResourceNotFoundException При попытке удалить несуществующее правило
      */
     @Override
     public void delete(int id) {
