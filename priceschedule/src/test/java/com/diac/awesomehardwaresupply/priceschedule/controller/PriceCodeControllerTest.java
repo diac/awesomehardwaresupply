@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.priceschedule.controller;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.PriceCode;
 import com.diac.awesomehardwaresupply.priceschedule.service.PriceCodeService;
@@ -123,6 +124,22 @@ public class PriceCodeControllerTest {
     }
 
     @Test
+    public void whenPostViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        String value = "test";
+        PriceCode priceCode = PriceCode.builder()
+                .name(value)
+                .build();
+        String requestBody = objectWriter.writeValueAsString(priceCode);
+        Mockito.when(priceCodeService.add(priceCode))
+                .thenThrow(ResourceConstraintViolationException.class);
+        mockMvc.perform(
+                        post("/price_code")
+                                .content(requestBody)
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void whenPut() throws Exception {
         int id = 1;
         String value = "test";
@@ -171,6 +188,25 @@ public class PriceCodeControllerTest {
                         .content(jsonValue)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenPutViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        int id = 1;
+        String value = "test";
+        PriceCode priceCode = PriceCode.builder()
+                .id(id)
+                .name(value)
+                .build();
+        String jsonValue = objectWriter.writeValueAsString(priceCode);
+        String requestUrl = String.format("/price_code/%d", id);
+        Mockito.when(priceCodeService.update(id, priceCode))
+                .thenThrow(ResourceConstraintViolationException.class);
+        mockMvc.perform(
+                        put(requestUrl)
+                                .content(jsonValue)
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isBadRequest());
     }
 
     @Test
