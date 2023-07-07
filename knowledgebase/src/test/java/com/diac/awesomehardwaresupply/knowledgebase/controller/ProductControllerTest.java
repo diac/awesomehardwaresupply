@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.knowledgebase.controller;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.Product;
 import com.diac.awesomehardwaresupply.domain.model.ProductCategory;
@@ -152,6 +153,26 @@ public class ProductControllerTest {
     }
 
     @Test
+    public void whenPostViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        int id = 1;
+        String value = "test";
+        Product product = Product.builder()
+                .name(value)
+                .description(value)
+                .sku(value)
+                .productCategory(ProductCategory.builder().id(1).build())
+                .build();
+        String requestBody = objectWriter.writeValueAsString(product);
+        Mockito.when(productService.add(product))
+                .thenThrow(ResourceConstraintViolationException.class);
+        mockMvc.perform(
+                post("/product")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void whenPut() throws Exception {
         int id = 1;
         String value = "test";
@@ -203,6 +224,28 @@ public class ProductControllerTest {
                 .build();
         String jsonValue = objectWriter.writeValueAsString(product);
         String requestUrl = String.format("/product/%d", id);
+        mockMvc.perform(
+                put(requestUrl)
+                        .content(jsonValue)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenPutViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        int id = 1;
+        String value = "test";
+        Product product = Product.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .sku(value)
+                .productCategory(ProductCategory.builder().id(1).build())
+                .build();
+        String jsonValue = objectWriter.writeValueAsString(product);
+        String requestUrl = String.format("/product/%d", id);
+        Mockito.when(productService.update(id, product))
+                .thenThrow(ResourceConstraintViolationException.class);
         mockMvc.perform(
                 put(requestUrl)
                         .content(jsonValue)
