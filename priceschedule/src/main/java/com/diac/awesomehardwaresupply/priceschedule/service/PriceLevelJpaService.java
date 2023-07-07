@@ -1,9 +1,12 @@
 package com.diac.awesomehardwaresupply.priceschedule.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.PriceLevel;
 import com.diac.awesomehardwaresupply.priceschedule.repository.PriceLevelRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -67,6 +70,7 @@ public class PriceLevelJpaService implements PriceLevelService {
      *
      * @param name Имя уровня цен
      * @return Уровень цен
+     * @throws ResourceNotFoundException если ничего не найдено
      */
     @Override
     public PriceLevel findByName(String name) {
@@ -81,10 +85,15 @@ public class PriceLevelJpaService implements PriceLevelService {
      *
      * @param priceLevel Новый уровень цен
      * @return Сохраненный уровень цен
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public PriceLevel add(PriceLevel priceLevel) {
-        return priceLevelRepository.save(priceLevel);
+        try {
+            return priceLevelRepository.save(priceLevel);
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
@@ -93,22 +102,29 @@ public class PriceLevelJpaService implements PriceLevelService {
      * @param id         Идентификатор уровня цен, данные которого необходимо обновить
      * @param priceLevel Объект с обновленными данными уровня цен
      * @return Обновленный уровень цен
+     * @throws ResourceNotFoundException            при попытке обновить несуществующий уровень цен
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public PriceLevel update(int id, PriceLevel priceLevel) {
-        return priceLevelRepository.findById(id)
-                .map(priceLevelInDb -> {
-                    priceLevel.setId(id);
-                    return priceLevelRepository.save(priceLevel);
-                }).orElseThrow(
-                        () -> new ResourceNotFoundException(String.format(PRICE_LEVEL_DOES_NOT_EXIST_MESSAGE, id))
-                );
+        try {
+            return priceLevelRepository.findById(id)
+                    .map(priceLevelInDb -> {
+                        priceLevel.setId(id);
+                        return priceLevelRepository.save(priceLevel);
+                    }).orElseThrow(
+                            () -> new ResourceNotFoundException(String.format(PRICE_LEVEL_DOES_NOT_EXIST_MESSAGE, id))
+                    );
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
      * Удалить уровень цен из системы
      *
      * @param id Идентификатор уровня цен, который необходимо удалить
+     * @throws ResourceNotFoundException при попытке удалить несуществующий уровень цен
      */
     @Override
     public void delete(int id) {
