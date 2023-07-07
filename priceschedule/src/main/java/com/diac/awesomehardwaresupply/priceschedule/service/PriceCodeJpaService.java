@@ -1,9 +1,12 @@
 package com.diac.awesomehardwaresupply.priceschedule.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.PriceCode;
 import com.diac.awesomehardwaresupply.priceschedule.repository.PriceCodeRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -81,10 +84,15 @@ public class PriceCodeJpaService implements PriceCodeService {
      *
      * @param priceCode Новый код цены
      * @return Сохраненный код цены
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public PriceCode add(PriceCode priceCode) {
-        return priceCodeRepository.save(priceCode);
+        try {
+            return priceCodeRepository.save(priceCode);
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
@@ -93,22 +101,29 @@ public class PriceCodeJpaService implements PriceCodeService {
      * @param id        Идентификатор кода цены, данные которого необходимо обновить
      * @param priceCode Объект с обновленными данными кода цены
      * @return Обновленный код цены
+     * @throws ResourceNotFoundException            При попытке обновить несуществующий код цены
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public PriceCode update(int id, PriceCode priceCode) {
-        return priceCodeRepository.findById(id)
-                .map(priceCodeInDb -> {
-                    priceCode.setId(id);
-                    return priceCodeRepository.save(priceCode);
-                }).orElseThrow(
-                        () -> new ResourceNotFoundException(String.format(PRICE_CODE_DOES_NOT_EXIST_MESSAGE, id))
-                );
+        try {
+            return priceCodeRepository.findById(id)
+                    .map(priceCodeInDb -> {
+                        priceCode.setId(id);
+                        return priceCodeRepository.save(priceCode);
+                    }).orElseThrow(
+                            () -> new ResourceNotFoundException(String.format(PRICE_CODE_DOES_NOT_EXIST_MESSAGE, id))
+                    );
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
      * Удалить код цены из системы
      *
      * @param id Идентификатор кода товаров, который необходимо удалить
+     * @throws ResourceNotFoundException При попытке удалить несуществующий код цены
      */
     @Override
     public void delete(int id) {
