@@ -1,14 +1,17 @@
 package com.diac.awesomehardwaresupply.knowledgebase.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.ProductCategory;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductCategoryRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -100,6 +103,34 @@ public class ProductCategoryJpaServiceTest {
     }
 
     @Test
+    public void whenAddViolatesDataIntegrityThenThrowException() {
+        String value = "test";
+        ProductCategory productCategory = ProductCategory.builder()
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productCategoryRepository.save(productCategory))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> productCategoryService.add(productCategory)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenAddViolatesConstraintsThenThrowException() {
+        String value = "test";
+        ProductCategory productCategory = ProductCategory.builder()
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productCategoryRepository.save(productCategory))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> productCategoryService.add(productCategory)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
     public void whenUpdate() {
         int id = 1;
         String value = "test";
@@ -124,6 +155,40 @@ public class ProductCategoryJpaServiceTest {
         assertThatThrownBy(
                 () -> productCategoryService.update(id, productCategory)
         ).isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesDataIntegrityThenThrowException() {
+        int id = 1;
+        String value = "test";
+        ProductCategory productCategory = ProductCategory.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productCategoryRepository.findById(id)).thenReturn(Optional.of(productCategory));
+        Mockito.when(productCategoryRepository.save(productCategory))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> productCategoryService.update(id, productCategory)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesConstraintsThenThrowException() {
+        int id = 1;
+        String value = "test";
+        ProductCategory productCategory = ProductCategory.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productCategoryRepository.findById(id)).thenReturn(Optional.of(productCategory));
+        Mockito.when(productCategoryRepository.save(productCategory))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> productCategoryService.update(id, productCategory)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
     }
 
     @Test
