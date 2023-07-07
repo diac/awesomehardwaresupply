@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.knowledgebase.controller;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.ProductSpecification;
 import com.diac.awesomehardwaresupply.knowledgebase.service.ProductSpecificationService;
@@ -96,7 +97,6 @@ public class ProductSpecificationControllerTest {
 
     @Test
     public void whenPostWithNullValuesThenResponseStatusIsBadRequest() throws Exception {
-        int id = 1;
         ProductSpecification productSpecification = ProductSpecification.builder()
                 .name(null)
                 .description(null)
@@ -112,13 +112,30 @@ public class ProductSpecificationControllerTest {
 
     @Test
     public void whenPostWithBlankValuesThenResponseStatusIsBadRequest() throws Exception {
-        int id = 1;
         ProductSpecification productSpecification = ProductSpecification.builder()
                 .name("")
                 .description("")
                 .units("")
                 .build();
         String requestBody = objectWriter.writeValueAsString(productSpecification);
+        mockMvc.perform(
+                post("/product_specification")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenPostViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        String value = "test";
+        ProductSpecification productSpecification = ProductSpecification.builder()
+                .name(value)
+                .description(value)
+                .units(value)
+                .build();
+        String requestBody = objectWriter.writeValueAsString(productSpecification);
+        Mockito.when(productSpecificationService.add(productSpecification))
+                .thenThrow(ResourceConstraintViolationException.class);
         mockMvc.perform(
                 post("/product_specification")
                         .content(requestBody)
@@ -178,6 +195,27 @@ public class ProductSpecificationControllerTest {
         String jsonValue = objectWriter.writeValueAsString(productSpecification);
         String requestUrl = String.format("/product_specification/%d", id);
         Mockito.when(productSpecificationService.update(id, productSpecification)).thenReturn(productSpecification);
+        mockMvc.perform(
+                put(requestUrl)
+                        .content(jsonValue)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenPutViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        int id = 1;
+        String value = "test";
+        ProductSpecification productSpecification = ProductSpecification.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .units(value)
+                .build();
+        String jsonValue = objectWriter.writeValueAsString(productSpecification);
+        String requestUrl = String.format("/product_specification/%d", id);
+        Mockito.when(productSpecificationService.update(id, productSpecification))
+                .thenThrow(ResourceConstraintViolationException.class);
         mockMvc.perform(
                 put(requestUrl)
                         .content(jsonValue)
