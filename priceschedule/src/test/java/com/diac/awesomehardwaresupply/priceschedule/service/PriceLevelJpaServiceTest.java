@@ -1,21 +1,25 @@
 package com.diac.awesomehardwaresupply.priceschedule.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.PriceLevel;
 import com.diac.awesomehardwaresupply.priceschedule.repository.PriceLevelRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = {
         PriceLevelJpaService.class
@@ -119,6 +123,32 @@ public class PriceLevelJpaServiceTest {
     }
 
     @Test
+    public void whenAddViolatesDataIntegrityThenThrowException() {
+        String value = "test";
+        PriceLevel priceLevel = PriceLevel.builder()
+                .name(value)
+                .build();
+        Mockito.when(priceLevelRepository.save(priceLevel))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> priceLevelService.add(priceLevel)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenAddViolatesConstraintsThenThrowException() {
+        String value = "test";
+        PriceLevel priceLevel = PriceLevel.builder()
+                .name(value)
+                .build();
+        Mockito.when(priceLevelRepository.save(priceLevel))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> priceLevelService.add(priceLevel)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
     public void whenUpdate() {
         int id = 1;
         String value = "test";
@@ -142,6 +172,38 @@ public class PriceLevelJpaServiceTest {
         assertThatThrownBy(
                 () -> priceLevelService.update(id, priceLevel)
         ).isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesDataIntegrityThenThrowException() {
+        int id = 1;
+        String value = "test";
+        PriceLevel priceLevel = PriceLevel.builder()
+                .id(id)
+                .name(value)
+                .build();
+        Mockito.when(priceLevelRepository.findById(id)).thenReturn(Optional.of(priceLevel));
+        Mockito.when(priceLevelRepository.save(priceLevel))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> priceLevelService.update(id, priceLevel)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesConstraintsThenThrowException() {
+        int id = 1;
+        String value = "test";
+        PriceLevel priceLevel = PriceLevel.builder()
+                .id(id)
+                .name(value)
+                .build();
+        Mockito.when(priceLevelRepository.findById(id)).thenReturn(Optional.of(priceLevel));
+        Mockito.when(priceLevelRepository.save(priceLevel))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> priceLevelService.update(id, priceLevel)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
     }
 
     @Test
