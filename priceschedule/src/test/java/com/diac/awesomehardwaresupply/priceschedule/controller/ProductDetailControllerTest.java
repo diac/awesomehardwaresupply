@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.priceschedule.controller;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.ProductDetail;
 import com.diac.awesomehardwaresupply.priceschedule.service.ProductDetailService;
@@ -129,6 +130,26 @@ public class ProductDetailControllerTest {
     }
 
     @Test
+    public void whenPostViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        String value = "test";
+        int number = 1234;
+        ProductDetail productDetail = ProductDetail.builder()
+                .productSku(value)
+                .listPrice(number)
+                .cost(number)
+                .priceCode(value)
+                .build();
+        String requestBody = objectWriter.writeValueAsString(productDetail);
+        Mockito.when(productDetailService.add(productDetail))
+                .thenThrow(ResourceConstraintViolationException.class);
+        mockMvc.perform(
+                post("/product_detail")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void whenPut() throws Exception {
         int id = 1;
         String value = "test";
@@ -184,6 +205,29 @@ public class ProductDetailControllerTest {
         String jsonValue = objectWriter.writeValueAsString(productDetail);
         String requestUrl = String.format("/product_detail/%d", id);
         Mockito.when(productDetailService.update(id, productDetail)).thenReturn(productDetail);
+        mockMvc.perform(
+                put(requestUrl)
+                        .content(jsonValue)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenPutViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        int id = 1;
+        String value = "test";
+        int number = 1234;
+        ProductDetail productDetail = ProductDetail.builder()
+                .id(id)
+                .productSku(value)
+                .listPrice(number)
+                .cost(number)
+                .priceCode(value)
+                .build();
+        String jsonValue = objectWriter.writeValueAsString(productDetail);
+        String requestUrl = String.format("/product_detail/%d", id);
+        Mockito.when(productDetailService.update(id, productDetail))
+                .thenThrow(ResourceConstraintViolationException.class);
         mockMvc.perform(
                 put(requestUrl)
                         .content(jsonValue)
