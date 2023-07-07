@@ -1,9 +1,12 @@
 package com.diac.awesomehardwaresupply.knowledgebase.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.Product;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -83,10 +86,15 @@ public class ProductJpaService implements ProductService {
      *
      * @param product Новый товар
      * @return Сохраненный товар
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public Product add(Product product) {
-        return productRepository.save(product);
+        try {
+            return productRepository.save(product);
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
@@ -96,16 +104,21 @@ public class ProductJpaService implements ProductService {
      * @param product Объект с обновленными данными товара
      * @return Обновленный товар
      * @throws ResourceNotFoundException При попытке обновить несуществующий товар
+     * @throws ResourceConstraintViolationException в случае, если при обращении к ресурсу нарушаются наложенные на него ограничения
      */
     @Override
     public Product update(int id, Product product) {
-        return productRepository.findById(id)
-                .map(productInDb -> {
-                    product.setId(id);
-                    return productRepository.save(product);
-                }).orElseThrow(
-                        () -> new ResourceNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, id))
-                );
+        try {
+            return productRepository.findById(id)
+                    .map(productInDb -> {
+                        product.setId(id);
+                        return productRepository.save(product);
+                    }).orElseThrow(
+                            () -> new ResourceNotFoundException(String.format(PRODUCT_DOES_NOT_EXIST_MESSAGE, id))
+                    );
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new ResourceConstraintViolationException(e.getMessage());
+        }
     }
 
     /**
