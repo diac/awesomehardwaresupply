@@ -1,14 +1,17 @@
 package com.diac.awesomehardwaresupply.priceschedule.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.PriceCode;
 import com.diac.awesomehardwaresupply.priceschedule.repository.PriceCodeRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -120,6 +123,32 @@ public class PriceCodeJpaServiceTest {
     }
 
     @Test
+    public void whenAddViolatesDataIntegrityThenThrowException() {
+        String value = "test";
+        PriceCode priceCode = PriceCode.builder()
+                .name(value)
+                .build();
+        Mockito.when(priceCodeRepository.save(priceCode))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> priceCodeService.add(priceCode)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenAddViolatesConstraintsThenThrowException() {
+        String value = "test";
+        PriceCode priceCode = PriceCode.builder()
+                .name(value)
+                .build();
+        Mockito.when(priceCodeRepository.save(priceCode))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> priceCodeService.add(priceCode)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
     public void whenUpdate() {
         int id = 1;
         String value = "test";
@@ -143,6 +172,38 @@ public class PriceCodeJpaServiceTest {
         assertThatThrownBy(
                 () -> priceCodeService.update(id, priceCode)
         ).isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesDataIntegrityThenThrowException() {
+        int id = 1;
+        String value = "test";
+        PriceCode priceCode = PriceCode.builder()
+                .id(id)
+                .name(value)
+                .build();
+        Mockito.when(priceCodeRepository.findById(id)).thenReturn(Optional.of(priceCode));
+        Mockito.when(priceCodeRepository.save(priceCode))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> priceCodeService.update(id, priceCode)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesConstraintsThenThrowException() {
+        int id = 1;
+        String value = "test";
+        PriceCode priceCode = PriceCode.builder()
+                .id(id)
+                .name(value)
+                .build();
+        Mockito.when(priceCodeRepository.findById(id)).thenReturn(Optional.of(priceCode));
+        Mockito.when(priceCodeRepository.save(priceCode))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> priceCodeService.update(id, priceCode)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
     }
 
     @Test
