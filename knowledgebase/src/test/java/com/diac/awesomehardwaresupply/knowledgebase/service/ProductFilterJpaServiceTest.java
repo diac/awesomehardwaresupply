@@ -1,14 +1,17 @@
 package com.diac.awesomehardwaresupply.knowledgebase.service;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.ProductFilter;
 import com.diac.awesomehardwaresupply.knowledgebase.repository.ProductFilterRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -100,6 +103,34 @@ public class ProductFilterJpaServiceTest {
     }
 
     @Test
+    public void whenAddViolatesDataIntegrityThenThrowException() {
+        String value = "test";
+        ProductFilter productFilter = ProductFilter.builder()
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productFilterRepository.save(productFilter))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> productFilterService.add(productFilter)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenAddViolatesConstraintsThenThrowException() {
+        String value = "test";
+        ProductFilter productFilter = ProductFilter.builder()
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productFilterRepository.save(productFilter))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> productFilterService.add(productFilter)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
     public void whenUpdate() {
         int id = 1;
         String value = "test";
@@ -127,6 +158,40 @@ public class ProductFilterJpaServiceTest {
     }
 
     @Test
+    public void whenUpdateViolatesDataIntegrityThenThrowException() {
+        int id = 1;
+        String value = "test";
+        ProductFilter productFilter = ProductFilter.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productFilterRepository.findById(id)).thenReturn(Optional.of(productFilter));
+        Mockito.when(productFilterRepository.save(productFilter))
+                .thenThrow(DataIntegrityViolationException.class);
+        assertThatThrownBy(
+                () -> productFilterService.update(id, productFilter)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
+    public void whenUpdateViolatesConstraintsThenThrowException() {
+        int id = 1;
+        String value = "test";
+        ProductFilter productFilter = ProductFilter.builder()
+                .id(id)
+                .name(value)
+                .description(value)
+                .build();
+        Mockito.when(productFilterRepository.findById(id)).thenReturn(Optional.of(productFilter));
+        Mockito.when(productFilterRepository.save(productFilter))
+                .thenThrow(ConstraintViolationException.class);
+        assertThatThrownBy(
+                () -> productFilterService.update(id, productFilter)
+        ).isInstanceOf(ResourceConstraintViolationException.class);
+    }
+
+    @Test
     public void whenDelete() {
         int id = 1;
         ProductFilter productFilter = ProductFilter.builder()
@@ -137,5 +202,14 @@ public class ProductFilterJpaServiceTest {
                 () -> productFilterService.delete(id)
         );
         Mockito.verify(productFilterRepository).delete(productFilter);
+    }
+
+    @Test
+    public void whenDeleteNonExistentThenThrowException() {
+        int id = 1;
+        Mockito.when(productFilterRepository.findById(id)).thenReturn(Optional.empty());
+        assertThatThrownBy(
+                () -> productFilterService.delete(id)
+        ).isInstanceOf(ResourceNotFoundException.class);
     }
 }
