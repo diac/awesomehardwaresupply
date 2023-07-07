@@ -1,5 +1,6 @@
 package com.diac.awesomehardwaresupply.priceschedule.controller;
 
+import com.diac.awesomehardwaresupply.domain.exception.ResourceConstraintViolationException;
 import com.diac.awesomehardwaresupply.domain.exception.ResourceNotFoundException;
 import com.diac.awesomehardwaresupply.domain.model.PriceCode;
 import com.diac.awesomehardwaresupply.domain.model.PriceCodePricing;
@@ -107,6 +108,23 @@ public class PriceCodePricingControllerTest {
     }
 
     @Test
+    public void whenPostViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        int id = 1;
+        PriceCodePricing priceCodePricing = PriceCodePricing.builder()
+                .priceCode(PriceCode.builder().id(id).build())
+                .priceLevel(PriceLevel.builder().id(id).build())
+                .build();
+        String requestBody = objectWriter.writeValueAsString(priceCodePricing);
+        Mockito.when(priceCodePricingService.add(priceCodePricing))
+                .thenThrow(ResourceConstraintViolationException.class);
+        mockMvc.perform(
+                post("/price_code_pricing")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void whenPut() throws Exception {
         int id = 1;
         PriceCodePricing priceCodePricing = PriceCodePricing.builder()
@@ -140,6 +158,25 @@ public class PriceCodePricingControllerTest {
                         .content(jsonValue)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenPutViolatesResourceConstraintsThenStatusIsBadRequest() throws Exception {
+        int id = 1;
+        PriceCodePricing priceCodePricing = PriceCodePricing.builder()
+                .id(id)
+                .priceCode(PriceCode.builder().id(id).build())
+                .priceLevel(PriceLevel.builder().id(id).build())
+                .build();
+        String jsonValue = objectWriter.writeValueAsString(priceCodePricing);
+        String requestUrl = String.format("/price_code_pricing/%d", id);
+        Mockito.when(priceCodePricingService.update(id, priceCodePricing))
+                .thenThrow(ResourceConstraintViolationException.class);
+        mockMvc.perform(
+                        put(requestUrl)
+                                .content(jsonValue)
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isBadRequest());
     }
 
     @Test
