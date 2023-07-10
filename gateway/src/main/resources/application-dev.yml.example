@@ -30,3 +30,7 @@ spring:
           filters:
             - AuthFilter
             - RewritePath=/price_schedule/(?<segment>.*), /$\{segment}
+eureka:
+  client:
+    service-url:
+      defaultZone: eureka-default-zone-url
