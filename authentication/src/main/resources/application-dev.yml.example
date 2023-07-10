@@ -9,6 +9,10 @@ spring:
     password: db_password
   liquibase:
     change-log: classpath:db/liquibase-changelog.xml
+eureka:
+  client:
+    service-url:
+      defaultZone: eureka-default-zone-url
 # noinspection undefined
 security:
   b-crypt-encoder-strength: 10
