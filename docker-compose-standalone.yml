@@ -5,7 +5,7 @@ networks:
     driver: bridge
 services:
   ### Databases ###
-  db_ahs:
+  db-ahs:
     build:
       context: db
       dockerfile: Dockerfile
@@ -20,64 +20,78 @@ services:
     networks:
       - ahs_local
     restart: always
+  ### Eureka ###
+  app-eureka-server:
+    image: awesomehardwaresupply_app_eureka_server
+    build:
+      context: .
+      dockerfile: eureka-server/Dockerfile
+    container_name: awesomehardwaresupply_app_eureka_server
+    ports:
+      - "8761:8761"
+    networks:
+      - ahs_local
   ### Authentication ###
-  app_authentication:
+  app-authentication:
     image: awesomehardwaresupply_app_authentication
     build:
       context: .
       dockerfile: authentication/Dockerfile
     container_name: awesomehardwaresupply_app_authentication
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_ahs:5432/ahs_authentication
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-ahs:5432/ahs_authentication
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - security.b-crypt-encoder-strength=${B_CRYPT_ENCODER_STRENGTH}
       - security.jwt.secret=${JWT_SECRET}
       - SPRING_PROFILES_ACTIVE=prod
-    ports:
-      - "8081:8080"
+      - spring.application.name=AUTHENTICATION
+      - eureka.client.serviceUrl.defaultZone=http://app-eureka-server:8761/eureka/
     networks:
       - ahs_local
     depends_on:
-      - db_ahs
+      - db-ahs
+      - app-eureka-server
   ### Knowledgebase ###
-  app_knowledgebase:
+  app-knowledgebase:
     image: awesomehardwaresupply_app_knowledgebase
     build:
       context: .
       dockerfile: knowledgebase/Dockerfile
     container_name: awesomehardwaresupply_app_knowledgebase
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_ahs:5432/ahs_knowledgebase
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-ahs:5432/ahs_knowledgebase
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_PROFILES_ACTIVE=prod
-    ports:
-      - "8082:8080"
+      - spring.application.name=KNOWLEDGEBASE
+      - eureka.client.serviceUrl.defaultZone=http://app-eureka-server:8761/eureka/
     networks:
       - ahs_local
     depends_on:
-      - db_ahs
+      - db-ahs
+      - app-eureka-server
   ### Price Schedule ###
-  app_price_schedule:
+  app-price-schedule:
     image: awesomehardwaresupply_app_price_schedule
     build:
       context: .
       dockerfile: priceschedule/Dockerfile
     container_name: awesomehardwaresupply_app_price_schedule
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_ahs:5432/ahs_price_schedule
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-ahs:5432/ahs_price_schedule
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_PROFILES_ACTIVE=prod
-    ports:
-      - "8083:8080"
+      - spring.application.name=PRICE_SCHEDULE
+      - eureka.client.serviceUrl.defaultZone=http://app-eureka-server:8761/eureka/
     networks:
       - ahs_local
     depends_on:
-      - db_ahs
+      - db-ahs
+      - app-eureka-server
   ### Gateway ###
-  app_gateway:
+  app-gateway:
     image: awesomehardwaresupply_app_gateway
     build:
       context: .
@@ -86,14 +100,16 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - security.jwt.secret=${JWT_SECRET}
-      - AUTHENTICATION_SERVICE_URI=http://127.0.0.1:8081/
-      - KNOWLEDGEBASE_SERVICE_URI=http://127.0.0.1:8082/
-      - PRICE_SCHEDULE_SERVICE_URI=http://127.0.0.1:8083/
+      - AUTHENTICATION_SERVICE_URI=lb://AUTHENTICATION
+      - KNOWLEDGEBASE_SERVICE_URI=lb://KNOWLEDGEBASE
+      - PRICE_SCHEDULE_SERVICE_URI=lb://PRICE_SCHEDULE
+      - eureka.client.serviceUrl.defaultZone=http://app-eureka-server:8761/eureka/
     ports:
       - "8080:8080"
     networks:
       - ahs_local
     depends_on:
-      - app_authentication
-      - app_knowledgebase
-      - app_price_schedule  
+      - app-authentication
+      - app-knowledgebase
+      - app-price-schedule
+      - app-eureka-server
