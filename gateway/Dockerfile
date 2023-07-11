@@ -1,11 +1,13 @@
 # Create jar package
-FROM maven:3.8-openjdk-17 as maven
-WORKDIR /app
-COPY . /app
-RUN mvn --projects domain,gateway clean package
+FROM maven:3.8-openjdk-17 as build
+ENV HOME=/usr/app
+RUN mkdir -p $HOME
+WORKDIR $HOME
+ADD . $HOME
+RUN --mount=type=cache,target=/root/.m2 mvn -f $HOME/pom.xml --projects domain,gateway clean package -Dmaven.test.skip=true
 
 # Launch the app
 FROM openjdk:17.0.2-jdk
 WORKDIR /app
-COPY --from=maven /app/gateway/target/gateway-0.0.1-SNAPSHOT.jar app.jar
-CMD java -jar app.jar
+COPY --from=build /usr/app/gateway/target/gateway-0.0.1-SNAPSHOT.jar /app/app.jar
+CMD java -jar /app/app.jar
