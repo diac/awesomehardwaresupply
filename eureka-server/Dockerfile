@@ -1,5 +1,5 @@
 # Create jar package
-FROM maven:3.8-openjdk-17 as maven
+FROM maven:3.8-openjdk-17 as build
 ENV HOME=/usr/app
 RUN mkdir -p $HOME
 WORKDIR $HOME
